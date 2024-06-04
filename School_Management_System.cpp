@@ -1,4 +1,5 @@
 #include<iostream>
+#include <cstdio>
 #include<fstream>
 #include<cstdlib>    // for exit() function
 #include<conio.h>    // for getch() function
@@ -12,14 +13,67 @@ private:
     string name,address,phn_no;
     int class_,roll;
 public:
+    string usn,pass;
     int choice,n,r, total=0;
     void menu();
+    void submenu();
     void insert();
     void display();
     void search();
     void delet();
 };
-void student::menu()
+
+void student :: menu()
+{
+a:
+    system("cls");
+    int s;
+    cout<<"\t\t\t\t-----------------------------"<<endl;
+    cout<<"\t\t\t\t| SCHOOL MANAGEMENT SYSTEM  |"<<endl;
+    cout<<"\t\t\t\t-----------------------------"<<endl;
+    cout<<"\n\t\t\t\t   1. Teacher LogIn "<<endl;
+    cout<<"\t\t\t\t   2. Student LogIn "<<endl;
+    cout<<"\t\t\t\t   3. Cancel "<<endl<<endl;
+    cout<<"\t\t\t\t  ------------------------"<<endl;
+    cout<<"\t\t\t\t   Choose Option : [1/2/3]"<<endl;
+    cout<<"\t\t\t\t  ------------------------"<<endl;
+
+    cout<<"Enter Your Choose: ";
+    cin>>s;
+    switch(s)
+    {
+    case 1:
+        system("cls");
+        cout<<"\n\t\t\t Enter username: ";
+        cin>>usn;
+        cout<<"\n\t\t\t Enter Password: ";
+        cin>>pass;
+        if(pass=="1234")
+            submenu();
+        else
+        {
+            system("cls");
+            cout<<"\n\t\t\t* Incorrect Username or Password!"<<endl;
+            cout<<"\n\n # Press Enter key for Main menu...!";
+        }
+        break;
+    case 2:
+        search();
+        break;
+    case 3:
+        exit(0);
+        break;
+
+    default:
+        cout<<"\n\t\t\t\t Invalid Choice..! Please Try Again..!";
+        cout<<"\n\n # Press Enter key for Main menu...!";
+        break;
+    }
+    getch();
+    goto a;
+}
+
+void student::submenu()
 {
 menustart:
     char x;
@@ -27,11 +81,12 @@ menustart:
     cout<<"\t\t\t\t-----------------------------"<<endl;
     cout<<"\t\t\t\t| SCHOOL MANAGEMENT SYSTEM  |"<<endl;
     cout<<"\t\t\t\t-----------------------------"<<endl;
-    cout<<"\t\t\t\t 1. Enter New student Record"<<endl;
+    cout<<"\t\t\t\t Profile: "<<usn<<endl;
+    cout<<"\n\t\t\t\t 1. Enter New student Record"<<endl;
     cout<<"\t\t\t\t 2. Display student Record"<<endl;
     cout<<"\t\t\t\t 3. Search student Record"<<endl;
     cout<<"\t\t\t\t 4. Delete student Record"<<endl;
-    cout<<"\t\t\t\t 5. Exit"<<endl<<endl;
+    cout<<"\t\t\t\t 5. LogOut"<<endl<<endl;
 
     cout<<"\t\t\t\t------------------------------"<<endl;
     cout<<"\t\t\t\t Choose Option : [1/2/3/4/5]"<<endl;
@@ -88,6 +143,7 @@ void student::insert()
     cin>>address;
     cout<<"\t\t Enter Phone no: ";
     cin>>phn_no;
+    cin.ignore();
 
     if(class_==1)
     {
