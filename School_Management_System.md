@@ -14,52 +14,21 @@ Department of Computer Science and Engineering
  
                                       SCHOOL MANAGEMENT SYSTEM 
  
-                                                                By 
- 	
-                Abdullah Jakaria                            	ID: 20234103383 
- 	     AKM Azizul Hasan Adlu Ador 	ID: 20234103388  
-              Shaon Kumaer Das                                     ID: 20234103456 
-                MD.  AR Rafi                         	ID: 20234103398 
-                Md. Rakib Ali                  	ID: 20234103396 
- 
- 
-                                                      May , 2024             
+                                          May , 2024             
  
 Submitted in partial fulfillment of the requirements of Second Semester Bachelor of Science in Computer Science and Engineering . 
  
 Declaration 
 We do hereby declare that the project works presented here entitled, “ School Management System ” are the results of our own works. We further declare that the project has been compiled and written by us and no part of this project has been submitted elsewhere for the requirements of any degree, award or diploma or any other purposes except for this project. The materials that are obtained from other sources are duly acknowledged in this project. 
- 
-Signature of Developers 
-  
- 
-  
-Abdullah Jakaria , ID: 20234103383 
- 
-  
-AKM Azizul Hasan Adlu Ador , ID: 20234103388 
- 
-  
-Shaon Kumaer Das , ID: 20234103456 
- 
-  
-MD.  AR Rafi , ID: 20234103398 
- 
-  
-Md. Rakib Ali , ID: 20234103396 
                                                                                                                                                                 
 Approval 
 I do hereby declare that the project works presented here with entitled as, School Management System , are the outcome of the original works carried out by Abdullah Jakaria, AKM Azizul Hasan Adlu Ador , Shaon Kumaer Das, MD.  AR Rafi , Md. Rakib Ali under my supervision. I further declare that no part of this project has been submitted elsewhere for the requirements of any degree, award or diploma or any other purposes except for this project. I further certify that the dissertation meets the requirements and standard for the degree of in Computer Science and Engineering. 
- 
- 
- 
   
 Chairman 
 Md. Saifur Rahman 
 Assistant Professor 
 Department of Computer Science Engineering 
 Bangladesh University of Business and Technology 
- 
   
 Supervisor 
 Md. Ashraful Islam 
@@ -73,51 +42,10 @@ We are deeply thankful to Bangladesh University of Business and Technology
  We have completed our project with his help. We found the project area, topic, and problem with his suggestions. He guided us with our study, and supplied us many articles and academic resources in this area. He is patient and responsible. When we had questions and needed his help, he would always find time to meet and discuss with us no matter how busy he was. We also want to give thanks to our CSE department. Our department provide us logistic supports to complete our project with smoothly. We would also like to acknowledge our team members for supporting each other and be grateful to 
 our university for providing this opportunity for us. 	 
 Contents  
+  
  
-Declaration	ii 
-Approval	iii 
-Acknowledgement	iv 
-
- 
-1	Introduction ...................................................................................................................... 1 
-1.1	Introduction ............................................................................................................... 1 
-1.2	Problem Statement : .................................................................................................. 2 
-1.3	Project Objective : .................................................................................................... 2 
-1.4	Motivations ............................................................................................................... 2 
-1.5	Project Contribution ................................................................................................. 2 
-1.6	Project Report Organization .................................................................................... 3 
-1.7	Summary ................................................................................................................... 3 
- 
-2	Literature Review............................................................................................................. 4 
-2.1	Introduction ............................................................................................................... 4 
-2.2	Efficiency and Automation……………………………… …..………………………4 
-2.3	Communication Improvements..……………………………………………………4 
-2.4	Data Management and Accessibility…….………………………………………….4 
-2.5	Personalized Learning……..…………………………………………………………5 
-2.6	Administrative Streamlining………...………………………………………………5 
-2.7	Security and Privacy….………………………………………………………………5 
-2.8	Summary .................................................................................................................... 6 
- 
- 
-3	Proposed Project .............................................................................................................. 7 
-3.1	Introduction .............................................................................................................. 7 
-3.2	Feasibility analysis ................................................................................................... 7 
-3.3	Requirement Analysis…………………..……………………………………………7 
-3.4	Summary ................................................................................................................... 8 4  Implementation ................................................................................................................. 9 
-4.1	Introduction ............................................................................................................... 9 
-4.2	System Setup............................................................................................................. 9 
-4.3	Evaluation ................................................................................................................. 9 
-4.4	Results and Discussion ............................................................................................ 9 
-4.5	Summary ............................................................................................................... 10 
- 
-5	Conclusion ...................................................................................................................... 11 
-5.1	Conclusion ............................................................................................................... 11 
-5.2	Project Code  : ........................................................................................................... 11 
- 
-1 
- 
-1 	Introduction 
-	1.1 	Introduction 
+Introduction 
+1.1 Introduction 
 Education is the process of facilitating learning which in this case is the acquisition of knowledge, skills, values, morals, beliefs, habits and personal development. Education originated as transmission of cultural heritage from one generation to the next. Today, education goals increasingly encompasses new ideas such as liberation of learners , critical thinking about present information for future applications and skills needed for the modern society 
 Schools are educational institutes designed to provide learning environment for the teaching of students. Several countries have systems of formal education which sometimes is compulsory where students progress through a series of schools. 
 This being a major factor in the life of human-kind, it is important to ensure its success and smooth running to provide a reliable environment for relaying information to the learners. The population of both the staffs and students in schools is so many and this calls for easier ways to manage and run institutions without difficulty. 
@@ -128,7 +56,7 @@ To ensure success in everyday tasks of the schools, it is highly recommendable t
  
 The main focus in this project is to design a system that can support running of the schools by linking various departments within the institute and the management. It is a platform where information will be passed, requisitions made and suggestions poste
  
-1.2 	Problem Statement : 
+1.2 Problem Statement  
 The academic achievement for many students has declined because of lack of care and monitoring from their parents as they no longer have time to visit the schools to check on their children performance and also due to increased population in a majority of schools hence increased workload for the teachers. Headmasters and teachers face major problems at the start of every new academic year, because of the distribution process for subjects and classes, in addition to this, through the end of every year, another major challenge they face is the complexities of the grades entry process for their students. Lack of communication and collaboration among the teachers, staffs and parents has a bad reflection on the education process. Students’ data are also lost or interfered with due to increased population and poor management of students’ and staffs’ data. 
 1.3    Project Objective : 
 The main objectives of this study include; 
@@ -139,10 +67,10 @@ The main objectives of this study include;
 •	To make a virtual community between the members of educational process 
  
  
-1.4    Motivations 
+1.4  Motivations 
 Implementing a School Management System improves efficiency, communication, and data management. It supports personalized learning, streamlines administrative tasks, ensures security, and facilitates remote learning. By enhancing parental involvement and enabling data-driven decisions, it fosters a collaborative, adaptable educational environment, ultimately enhancing the quality of education and operational effectiveness. 
  
-1.5    Project Contribution 
+1.5  Project Contribution 
 The main contribution of this project include, 
  
 •	Automates administrative tasks, reducing manual workload and errors. 
@@ -150,10 +78,14 @@ The main contribution of this project include,
 •	Centralizes and secures data, ensuring easy access and accurate recordkeeping. 
 •	Tracks individual progress, supporting tailored educational approaches. 
  
-1.6    Project Report Organization 
+1.6   Project Report Organization 
 An overview of the steps of the report is organized as follows. 
-Chapter 2 described how we thought and built all of our project work. Chapter 3 comprises our proposed method in detail along with the analyze the requirements, the feasibility. 
-Chapter 4 presents the background information and implementation of our project. Lastly, Chapter 5 is a review of our project work, including conclusions as well as discusses the objectives for future work. 
+Chapter 2 described how we thought and built all of our project work. Chapter 3 comprises our proposed method in detail along with the analyze the requirements, the feasibility.
+
+
+Chapter 4 
+
+presents the background information and implementation of our project. Lastly, Chapter 5 is a review of our project work, including conclusions as well as discusses the objectives for future work. 
 1.7    Summary 
 This chapter comprises a broad overview of the problem such as what are we specifically targeting, what are the purposes of our project work along with the motivation of the output of the project. This section also represents the overall steps on which we carried out our project. 
  
@@ -240,5 +172,4 @@ Active stakeholder involvement, a phased implementation approach, and comprehens
 5.2  Project Code : 
 GitHub Link :  
 https://github.com/Rakibislam22/SDP-1/blob/main/School_Management_System.cpp 
-Or  Scan - 
  
