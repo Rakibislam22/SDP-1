@@ -13,15 +13,69 @@ private:
     string name,address,phn_no;
     int class_,roll;
 public:
-    string usn,pass;
-    int choice,n,r, total=0;
+    string usn;
+    int choice,n,r,pass, total=0;
     void menu();
+    void PasswordCng();
     void submenu();
     void insert();
     void display();
     void search();
     void delet();
 };
+
+void student :: PasswordCng()
+{
+d:
+    int passCI,passC,passN,passCo;
+    system("cls");
+    fstream file;
+    cout<<"\n\t\t\t Enter Current PIN: ";
+    cin>>passC;
+    cout<<"\t\t\t Enter New PIN: ";
+    cin>>passN;
+    cout<<"\t\t\t Enter Conform PIN: ";
+    cin>>passCo;
+    file.open("PIN.txt", ios::in);
+    file>>passCI;
+    if(!file)
+    {
+        cout<<"Error !! Try again!";
+        file.close();
+    }
+
+    else if(passCI==passC)
+    {
+        if(passN==passCo)
+        {
+            fstream file;
+            file.open("PIN.txt", ios::out);
+            file<<passCo;
+            file.close();
+            cout<<"\n\t\t\tPIN Changed Successfully.. ";
+            cout<<"\n\n # Press Enter key for Main menu...!";
+            getch();
+
+
+        }
+        else
+        {
+            file.close();
+            cout<<"\n\t\t** New PIN And Conform PIN Not Matched..!";
+            cout<<"\n\n # Press Enter key for Main menu...!";
+            getch();
+
+        }
+    }
+    else
+    {
+        cout<<"\n\t\t** Incorrect Current PIN...!";
+        cout<<"\n\n\n # Press Enter key for Main menu...!";
+        file.close();
+        getch();
+
+    }
+}
 
 void student :: menu()
 {
@@ -32,7 +86,7 @@ a:
     cout<<"\t\t\t\t| SCHOOL MANAGEMENT SYSTEM  |"<<endl;
     cout<<"\t\t\t\t-----------------------------"<<endl;
     cout<<"\n\t\t\t\t   1. Teacher LogIn "<<endl;
-    cout<<"\t\t\t\t   2. Student LogIn "<<endl;
+    cout<<"\t\t\t\t   2. Student Info "<<endl;
     cout<<"\t\t\t\t   3. Cancel "<<endl<<endl;
     cout<<"\t\t\t\t  ------------------------"<<endl;
     cout<<"\t\t\t\t   Choose Option : [1/2/3]"<<endl;
@@ -43,13 +97,30 @@ a:
     switch(s)
     {
     case 1:
+    {
+
         system("cls");
-        cout<<"\n\t\t\t Enter username: ";
+        int pass1,pass2=1234;
+        cout<<"\n\t *** Username And PIN Provided by only School Authority *** ";
+        cout<<"\n\n\t\t\t Enter username: ";
         cin>>usn;
-        cout<<"\n\t\t\t Enter Password: ";
-        cin>>pass;
-        if(pass=="1234")
+        cout<<"\n\t\t\t Enter PIN: ";
+        cin>>pass1;
+        fstream file;
+        file.open("PIN.txt",ios :: in);
+        if(!file)
+        {
+            fstream file;
+            file.open("PIN.txt", ios::out);
+            file<<pass2;
+            file.close();
+        }
+        file>>pass;
+        if(pass==pass1)
+        {
+            file.close();
             submenu();
+        }
         else
         {
             system("cls");
@@ -57,10 +128,13 @@ a:
             cout<<"\n\n # Press Enter key for Main menu...!";
         }
         break;
+    }
+
     case 2:
         search();
         break;
     case 3:
+        cout<<"\n\n\t\t\t  Thanks for using our software."<<endl<<"\n\t\t\tAll rights reserved, Akatsuki 2024."<<endl<<endl<<endl;
         exit(0);
         break;
 
@@ -86,7 +160,8 @@ menustart:
     cout<<"\t\t\t\t 2. Display student Record"<<endl;
     cout<<"\t\t\t\t 3. Search student Record"<<endl;
     cout<<"\t\t\t\t 4. Delete student Record"<<endl;
-    cout<<"\t\t\t\t 5. LogOut"<<endl<<endl;
+    cout<<"\t\t\t\t 5. Change PIN"<<endl;
+    cout<<"\t\t\t\t 6. LogOut"<<endl<<endl;
 
     cout<<"\t\t\t\t------------------------------"<<endl;
     cout<<"\t\t\t\t Choose Option : [1/2/3/4/5]"<<endl;
@@ -117,6 +192,11 @@ menustart:
         break;
 
     case 5:
+        PasswordCng();
+        break;
+
+    case 6:
+        cout<<"\n\n\t\t\t  Thanks for using our software."<<endl<<"\n\t\t\tAll rights reserved, Akatsuki 2024."<<endl<<endl<<endl;
         exit(0);
     default:
         cout<<"\n\t\t\t\t Invalid Choice..! Please Try Again..!";
@@ -133,76 +213,78 @@ void student::insert()
     fstream file;
     cout<<"\n----------------------------------------------------------------------";
     cout<<"\n------------------------- Add Student Details ------------------------";
-    cout<<"\n\t\t Enter Name: ";
-    cin>>name;
-    cout<<"\t\t Enter Roll: ";
-    cin>>roll;
-    cout<<"\t\t Enter Class: ";
-    cin>>class_;
-    cout<<"\t\t Enter Address: ";
-    cin>>address;
-    cout<<"\t\t Enter Phone no: ";
-    cin>>phn_no;
+    cout<<"\n\n\t\t\t Enter Name: ";
     cin.ignore();
+    getline(cin, name);
+    cout << "\t\t\t Enter Roll: ";
+    cin >> roll;
+    cout << "\t\t\t Enter Class: ";
+    cin >> class_;
+    cin.ignore();
+    cout << "\t\t\t Enter Address: ";
+    getline(cin, address);
+    cout << "\t\t\t Enter Phone no: ";
+    getline(cin, phn_no);
+    cout << "\n\t\t\t Record Saved..! "<<endl;
 
     if(class_==1)
     {
         file.open("studentRecord1.txt", ios::app | ios::out);
-        file<<" "<<name<<" "<<roll<<" "<<class_<<" "<<address<<" "<<phn_no<<"\n";
+        file<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
         file.close();
     }
     else if(class_==2)
     {
         file.open("studentRecord2.txt", ios::app | ios::out);
-        file<<" "<<name<<" "<<roll<<" "<<class_<<" "<<address<<" "<<phn_no<<"\n";
+        file<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
         file.close();
     }
     else if(class_==3)
     {
         file.open("studentRecord3.txt", ios::app | ios::out);
-        file<<" "<<name<<" "<<roll<<" "<<class_<<" "<<address<<" "<<phn_no<<"\n";
+        file<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
         file.close();
     }
     else if(class_==4)
     {
         file.open("studentRecord4.txt", ios::app | ios::out);
-        file<<" "<<name<<" "<<roll<<" "<<class_<<" "<<address<<" "<<phn_no<<"\n";
+        file<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
         file.close();
     }
     else if(class_==5)
     {
         file.open("studentRecord5.txt", ios::app | ios::out);
-        file<<" "<<name<<" "<<roll<<" "<<class_<<" "<<address<<" "<<phn_no<<"\n";
+        file<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
         file.close();
     }
     else if(class_==6)
     {
         file.open("studentRecord6.txt", ios::app | ios::out);
-        file<<" "<<name<<" "<<roll<<" "<<class_<<" "<<address<<" "<<phn_no<<"\n";
+        file<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
         file.close();
     }
     else if(class_==7)
     {
         file.open("studentRecord7.txt", ios::app | ios::out);
-        file<<" "<<name<<" "<<roll<<" "<<class_<<" "<<address<<" "<<phn_no<<"\n";
+        file<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
         file.close();
     }
     else if(class_==8)
     {
         file.open("studentRecord8.txt", ios::app | ios::out);
-        file<<" "<<name<<" "<<roll<<" "<<class_<<" "<<address<<" "<<phn_no<<"\n";
+        file<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
         file.close();
     }
     else if(class_==9)
     {
         file.open("studentRecord9.txt", ios::app | ios::out);
-        file<<" "<<name<<" "<<roll<<" "<<class_<<" "<<address<<" "<<phn_no<<"\n";
+        file<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
         file.close();
     }
     else if(class_==10)
     {
         file.open("studentRecord10.txt", ios::app | ios::out);
-        file<<" "<<name<<" "<<roll<<" "<<class_<<" "<<address<<" "<<phn_no<<"\n";
+        file<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
         file.close();
     }
 
@@ -227,7 +309,14 @@ void student::display()
         }
         else
         {
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
+
             while(!file.eof())
             {
                 total++;
@@ -236,7 +325,13 @@ void student::display()
                 cout<<"\t\t\t Class: "<<class_<<endl;
                 cout<<"\t\t\t Address: "<<address<<endl;
                 cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                file>> name>>roll>>class_>>address>>phn_no;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
             }
             if(total==0)
             {
@@ -260,7 +355,14 @@ void student::display()
         }
         else
         {
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
+
             while(!file.eof())
             {
                 total++;
@@ -269,7 +371,13 @@ void student::display()
                 cout<<"\t\t\t Class: "<<class_<<endl;
                 cout<<"\t\t\t Address: "<<address<<endl;
                 cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                file>> name>>roll>>class_>>address>>phn_no;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
             }
             if(total==0)
             {
@@ -293,7 +401,14 @@ void student::display()
         }
         else
         {
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
+
             while(!file.eof())
             {
                 total++;
@@ -302,7 +417,13 @@ void student::display()
                 cout<<"\t\t\t Class: "<<class_<<endl;
                 cout<<"\t\t\t Address: "<<address<<endl;
                 cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                file>> name>>roll>>class_>>address>>phn_no;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
             }
             if(total==0)
             {
@@ -326,7 +447,14 @@ void student::display()
         }
         else
         {
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
+
             while(!file.eof())
             {
                 total++;
@@ -335,7 +463,13 @@ void student::display()
                 cout<<"\t\t\t Class: "<<class_<<endl;
                 cout<<"\t\t\t Address: "<<address<<endl;
                 cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                file>> name>>roll>>class_>>address>>phn_no;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
             }
             if(total==0)
             {
@@ -359,7 +493,13 @@ void student::display()
         }
         else
         {
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
             while(!file.eof())
             {
                 total++;
@@ -368,7 +508,13 @@ void student::display()
                 cout<<"\t\t\t Class: "<<class_<<endl;
                 cout<<"\t\t\t Address: "<<address<<endl;
                 cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                file>> name>>roll>>class_>>address>>phn_no;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
             }
             if(total==0)
             {
@@ -392,7 +538,13 @@ void student::display()
         }
         else
         {
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
             while(!file.eof())
             {
                 total++;
@@ -401,7 +553,13 @@ void student::display()
                 cout<<"\t\t\t Class: "<<class_<<endl;
                 cout<<"\t\t\t Address: "<<address<<endl;
                 cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                file>> name>>roll>>class_>>address>>phn_no;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
             }
             if(total==0)
             {
@@ -425,7 +583,13 @@ void student::display()
         }
         else
         {
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
             while(!file.eof())
             {
                 total++;
@@ -434,7 +598,13 @@ void student::display()
                 cout<<"\t\t\t Class: "<<class_<<endl;
                 cout<<"\t\t\t Address: "<<address<<endl;
                 cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                file>> name>>roll>>class_>>address>>phn_no;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
             }
             if(total==0)
             {
@@ -458,7 +628,13 @@ void student::display()
         }
         else
         {
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
             while(!file.eof())
             {
                 total++;
@@ -467,18 +643,24 @@ void student::display()
                 cout<<"\t\t\t Class: "<<class_<<endl;
                 cout<<"\t\t\t Address: "<<address<<endl;
                 cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                file>> name>>roll>>class_>>address>>phn_no;
-            }
-            if(total==0)
-            {
-                cout<<"\n\t\t# No Data is Present..!";
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
+                if(total==0)
+                {
+                    cout<<"\n\t\t# No Data is Present..!";
+                    cout<<"\n\n # Press Enter key for Main menu...!";
+                }
+                else
+                    cout<<"\n\t\t\t# Total "<<total<<" Student Found! ";
                 cout<<"\n\n # Press Enter key for Main menu...!";
             }
-            else
-                cout<<"\n\t\t\t# Total "<<total<<" Student Found! ";
-            cout<<"\n\n # Press Enter key for Main menu...!";
+            file.close();
         }
-        file.close();
     }
     else if(n==9)
     {
@@ -491,7 +673,13 @@ void student::display()
         }
         else
         {
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
             while(!file.eof())
             {
                 total++;
@@ -500,18 +688,24 @@ void student::display()
                 cout<<"\t\t\t Class: "<<class_<<endl;
                 cout<<"\t\t\t Address: "<<address<<endl;
                 cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                file>> name>>roll>>class_>>address>>phn_no;
-            }
-            if(total==0)
-            {
-                cout<<"\n\t\t# No Data is Present..!";
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
+                if(total==0)
+                {
+                    cout<<"\n\t\t# No Data is Present..!";
+                    cout<<"\n\n # Press Enter key for Main menu...!";
+                }
+                else
+                    cout<<"\n\t\t\t# Total "<<total<<" Student Found! ";
                 cout<<"\n\n # Press Enter key for Main menu...!";
             }
-            else
-                cout<<"\n\t\t\t# Total "<<total<<" Student Found! ";
-            cout<<"\n\n # Press Enter key for Main menu...!";
+            file.close();
         }
-        file.close();
     }
     else if(n==10)
     {
@@ -524,7 +718,13 @@ void student::display()
         }
         else
         {
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
             while(!file.eof())
             {
                 total++;
@@ -533,7 +733,13 @@ void student::display()
                 cout<<"\t\t\t Class: "<<class_<<endl;
                 cout<<"\t\t\t Address: "<<address<<endl;
                 cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                file>> name>>roll>>class_>>address>>phn_no;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
             }
             if(total==0)
             {
@@ -576,7 +782,13 @@ void student::search()
         }
         else
         {
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
             while(!file.eof())
             {
                 if(r==roll)
@@ -587,11 +799,23 @@ void student::search()
                     cout<<"\t\t\t Class: "<<class_<<endl;
                     cout<<"\t\t\t Address: "<<address<<endl;
                     cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                    file>> name>>roll>>class_>>address>>phn_no;
+                    file.ignore();
+                    getline(file,name);
+                    file>>roll>>class_;
+                    file.ignore();
+                    getline(file,address);
+                    file>>phn_no;
+                    file.ignore();
                     break;
                 }
 
-                file>> name>>roll>>class_>>address>>phn_no;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
             }
             file.close();
             if(total==0)
@@ -617,7 +841,13 @@ void student::search()
         }
         else
         {
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
             while(!file.eof())
             {
 
@@ -629,10 +859,22 @@ void student::search()
                     cout<<"\t\t\t Class: "<<class_<<endl;
                     cout<<"\t\t\t Address: "<<address<<endl;
                     cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                    file>> name>>roll>>class_>>address>>phn_no;
+                    file.ignore();
+                    getline(file,name);
+                    file>>roll>>class_;
+                    file.ignore();
+                    getline(file,address);
+                    file>>phn_no;
+                    file.ignore();
                     break;
                 }
-                file>> name>>roll>>class_>>address>>phn_no;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
             }
             file.close();
             if(total==0)
@@ -658,7 +900,13 @@ void student::search()
         }
         else
         {
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
             while(!file.eof())
             {
 
@@ -670,10 +918,22 @@ void student::search()
                     cout<<"\t\t\t Class: "<<class_<<endl;
                     cout<<"\t\t\t Address: "<<address<<endl;
                     cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                    file>> name>>roll>>class_>>address>>phn_no;
+                    file.ignore();
+                    getline(file,name);
+                    file>>roll>>class_;
+                    file.ignore();
+                    getline(file,address);
+                    file>>phn_no;
+                    file.ignore();
                     break;
                 }
-                file>> name>>roll>>class_>>address>>phn_no;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
             }
             file.close();
             if(total==0)
@@ -699,7 +959,13 @@ void student::search()
         }
         else
         {
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
             while(!file.eof())
             {
 
@@ -711,10 +977,22 @@ void student::search()
                     cout<<"\t\t\t Class: "<<class_<<endl;
                     cout<<"\t\t\t Address: "<<address<<endl;
                     cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                    file>> name>>roll>>class_>>address>>phn_no;
+                    file.ignore();
+                    getline(file,name);
+                    file>>roll>>class_;
+                    file.ignore();
+                    getline(file,address);
+                    file>>phn_no;
+                    file.ignore();
                     break;
                 }
-                file>> name>>roll>>class_>>address>>phn_no;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
             }
             file.close();
             if(total==0)
@@ -740,7 +1018,13 @@ void student::search()
         }
         else
         {
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
             while(!file.eof())
             {
 
@@ -752,10 +1036,22 @@ void student::search()
                     cout<<"\t\t\t Class: "<<class_<<endl;
                     cout<<"\t\t\t Address: "<<address<<endl;
                     cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                    file>> name>>roll>>class_>>address>>phn_no;
+                    file.ignore();
+                    getline(file,name);
+                    file>>roll>>class_;
+                    file.ignore();
+                    getline(file,address);
+                    file>>phn_no;
+                    file.ignore();
                     break;
                 }
-                file>> name>>roll>>class_>>address>>phn_no;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
             }
             file.close();
             if(total==0)
@@ -781,7 +1077,13 @@ void student::search()
         }
         else
         {
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
             while(!file.eof())
             {
 
@@ -793,10 +1095,22 @@ void student::search()
                     cout<<"\t\t\t Class: "<<class_<<endl;
                     cout<<"\t\t\t Address: "<<address<<endl;
                     cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                    file>> name>>roll>>class_>>address>>phn_no;
+                    file.ignore();
+                    getline(file,name);
+                    file>>roll>>class_;
+                    file.ignore();
+                    getline(file,address);
+                    file>>phn_no;
+                    file.ignore();
                     break;
                 }
-                file>> name>>roll>>class_>>address>>phn_no;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
             }
             file.close();
             if(total==0)
@@ -822,7 +1136,13 @@ void student::search()
         }
         else
         {
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
             while(!file.eof())
             {
 
@@ -834,10 +1154,22 @@ void student::search()
                     cout<<"\t\t\t Class: "<<class_<<endl;
                     cout<<"\t\t\t Address: "<<address<<endl;
                     cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                    file>> name>>roll>>class_>>address>>phn_no;
+                    file.ignore();
+                    getline(file,name);
+                    file>>roll>>class_;
+                    file.ignore();
+                    getline(file,address);
+                    file>>phn_no;
+                    file.ignore();
                     break;
                 }
-                file>> name>>roll>>class_>>address>>phn_no;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
             }
             file.close();
             if(total==0)
@@ -863,9 +1195,16 @@ void student::search()
         }
         else
         {
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
             while(!file.eof())
             {
+
                 if(r==roll)
                 {
                     total++;
@@ -874,10 +1213,22 @@ void student::search()
                     cout<<"\t\t\t Class: "<<class_<<endl;
                     cout<<"\t\t\t Address: "<<address<<endl;
                     cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                    file>> name>>roll>>class_>>address>>phn_no;
+                    file.ignore();
+                    getline(file,name);
+                    file>>roll>>class_;
+                    file.ignore();
+                    getline(file,address);
+                    file>>phn_no;
+                    file.ignore();
                     break;
                 }
-                file>> name>>roll>>class_>>address>>phn_no;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
             }
             file.close();
             if(total==0)
@@ -903,7 +1254,13 @@ void student::search()
         }
         else
         {
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
             while(!file.eof())
             {
 
@@ -915,10 +1272,22 @@ void student::search()
                     cout<<"\t\t\t Class: "<<class_<<endl;
                     cout<<"\t\t\t Address: "<<address<<endl;
                     cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                    file>> name>>roll>>class_>>address>>phn_no;
+                    file.ignore();
+                    getline(file,name);
+                    file>>roll>>class_;
+                    file.ignore();
+                    getline(file,address);
+                    file>>phn_no;
+                    file.ignore();
                     break;
                 }
-                file>> name>>roll>>class_>>address>>phn_no;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
             }
             file.close();
             if(total==0)
@@ -944,7 +1313,13 @@ void student::search()
         }
         else
         {
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
             while(!file.eof())
             {
 
@@ -956,10 +1331,22 @@ void student::search()
                     cout<<"\t\t\t Class: "<<class_<<endl;
                     cout<<"\t\t\t Address: "<<address<<endl;
                     cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                    file>> name>>roll>>class_>>address>>phn_no;
+                    file.ignore();
+                    getline(file,name);
+                    file>>roll>>class_;
+                    file.ignore();
+                    getline(file,address);
+                    file>>phn_no;
+                    file.ignore();
                     break;
                 }
-                file>> name>>roll>>class_>>address>>phn_no;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
             }
             file.close();
             if(total==0)
@@ -973,7 +1360,6 @@ void student::search()
         }
 
     }
-
 }
 
 void student ::delet()
@@ -983,7 +1369,7 @@ void student ::delet()
     cout<<"\n---------------------- Delete Student Details -------------------------"<<endl;
     search();
     char s;
-    if(n=1&&total!=0)
+    if(n==1 && total!=0)
     {
         cout<<"\n\t\t\t Are you Sure...[y,n] ";
         cin>>s;
@@ -993,15 +1379,28 @@ void student ::delet()
             temf.open("temp1.txt");
             fstream file;
             file.open("studentRecord1.txt", ios::in);
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
+
             while(!file.eof())
             {
                 if(r!=roll)
                 {
-                    temf<<" "<<name<<" "<<roll<<" "<<class_<<" "<<address<<" "<<phn_no<<"\n";
+                    temf<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
                 }
 
-                file>> name>>roll>>class_>>address>>phn_no;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
             }
             file.close();
             temf.close();
@@ -1012,6 +1411,7 @@ void student ::delet()
             cout<<"\n\n\n # Press Enter Key for Main menu...!";
 
         }
+
         else
         {
             cout<<"\n\t\t\t Record not Deleted..!";
@@ -1021,7 +1421,7 @@ void student ::delet()
 
     }
 
-    else if(n=2&&total!=0)
+    else if(n==2 && total!=0)
     {
         cout<<"\n\t\t\t Are you Sure...[y,n] ";
         cin>>s;
@@ -1031,15 +1431,28 @@ void student ::delet()
             temf.open("temp1.txt");
             fstream file;
             file.open("studentRecord2.txt", ios::in);
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
+
             while(!file.eof())
             {
                 if(r!=roll)
                 {
-                    temf<<" "<<name<<" "<<roll<<" "<<class_<<" "<<address<<" "<<phn_no<<"\n";
+                    temf<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
                 }
 
-                file>> name>>roll>>class_>>address>>phn_no;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
             }
             file.close();
             temf.close();
@@ -1050,6 +1463,7 @@ void student ::delet()
             cout<<"\n\n\n # Press Enter Key for Main menu...!";
 
         }
+
         else
         {
             cout<<"\n\t\t\t Record not Deleted..!";
@@ -1059,7 +1473,7 @@ void student ::delet()
 
     }
 
-    else if(n=3&&total!=0)
+    else if(n==3 && total!=0)
     {
         cout<<"\n\t\t\t Are you Sure...[y,n] ";
         cin>>s;
@@ -1069,15 +1483,28 @@ void student ::delet()
             temf.open("temp1.txt");
             fstream file;
             file.open("studentRecord3.txt", ios::in);
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
+
             while(!file.eof())
             {
                 if(r!=roll)
                 {
-                    temf<<" "<<name<<" "<<roll<<" "<<class_<<" "<<address<<" "<<phn_no<<"\n";
+                    temf<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
                 }
 
-                file>> name>>roll>>class_>>address>>phn_no;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
             }
             file.close();
             temf.close();
@@ -1088,6 +1515,7 @@ void student ::delet()
             cout<<"\n\n\n # Press Enter Key for Main menu...!";
 
         }
+
         else
         {
             cout<<"\n\t\t\t Record not Deleted..!";
@@ -1097,7 +1525,7 @@ void student ::delet()
 
     }
 
-    else if(n=4&&total!=0)
+    else if(n==4 && total!=0)
     {
         cout<<"\n\t\t\t Are you Sure...[y,n] ";
         cin>>s;
@@ -1107,15 +1535,28 @@ void student ::delet()
             temf.open("temp1.txt");
             fstream file;
             file.open("studentRecord4.txt", ios::in);
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
+
             while(!file.eof())
             {
                 if(r!=roll)
                 {
-                    temf<<" "<<name<<" "<<roll<<" "<<class_<<" "<<address<<" "<<phn_no<<"\n";
+                    temf<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
                 }
 
-                file>> name>>roll>>class_>>address>>phn_no;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
             }
             file.close();
             temf.close();
@@ -1126,6 +1567,7 @@ void student ::delet()
             cout<<"\n\n\n # Press Enter Key for Main menu...!";
 
         }
+
         else
         {
             cout<<"\n\t\t\t Record not Deleted..!";
@@ -1135,7 +1577,7 @@ void student ::delet()
 
     }
 
-    else if(n=5&&total!=0)
+    else if(n==5 && total!=0)
     {
         cout<<"\n\t\t\t Are you Sure...[y,n] ";
         cin>>s;
@@ -1145,15 +1587,28 @@ void student ::delet()
             temf.open("temp1.txt");
             fstream file;
             file.open("studentRecord5.txt", ios::in);
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
+
             while(!file.eof())
             {
                 if(r!=roll)
                 {
-                    temf<<" "<<name<<" "<<roll<<" "<<class_<<" "<<address<<" "<<phn_no<<"\n";
+                    temf<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
                 }
 
-                file>> name>>roll>>class_>>address>>phn_no;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
             }
             file.close();
             temf.close();
@@ -1164,6 +1619,7 @@ void student ::delet()
             cout<<"\n\n\n # Press Enter Key for Main menu...!";
 
         }
+
         else
         {
             cout<<"\n\t\t\t Record not Deleted..!";
@@ -1173,7 +1629,7 @@ void student ::delet()
 
     }
 
-    else if(n=6&&total!=0)
+    else if(n==6 && total!=0)
     {
         cout<<"\n\t\t\t Are you Sure...[y,n] ";
         cin>>s;
@@ -1183,15 +1639,28 @@ void student ::delet()
             temf.open("temp1.txt");
             fstream file;
             file.open("studentRecord6.txt", ios::in);
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
+
             while(!file.eof())
             {
                 if(r!=roll)
                 {
-                    temf<<" "<<name<<" "<<roll<<" "<<class_<<" "<<address<<" "<<phn_no<<"\n";
+                    temf<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
                 }
 
-                file>> name>>roll>>class_>>address>>phn_no;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
             }
             file.close();
             temf.close();
@@ -1202,6 +1671,7 @@ void student ::delet()
             cout<<"\n\n\n # Press Enter Key for Main menu...!";
 
         }
+
         else
         {
             cout<<"\n\t\t\t Record not Deleted..!";
@@ -1211,7 +1681,7 @@ void student ::delet()
 
     }
 
-    else if(n=7&&total!=0)
+    else if(n==7 && total!=0)
     {
         cout<<"\n\t\t\t Are you Sure...[y,n] ";
         cin>>s;
@@ -1221,15 +1691,28 @@ void student ::delet()
             temf.open("temp1.txt");
             fstream file;
             file.open("studentRecord7.txt", ios::in);
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
+
             while(!file.eof())
             {
                 if(r!=roll)
                 {
-                    temf<<" "<<name<<" "<<roll<<" "<<class_<<" "<<address<<" "<<phn_no<<"\n";
+                    temf<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
                 }
 
-                file>> name>>roll>>class_>>address>>phn_no;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
             }
             file.close();
             temf.close();
@@ -1240,6 +1723,7 @@ void student ::delet()
             cout<<"\n\n\n # Press Enter Key for Main menu...!";
 
         }
+
         else
         {
             cout<<"\n\t\t\t Record not Deleted..!";
@@ -1249,7 +1733,7 @@ void student ::delet()
 
     }
 
-    else if(n=8&&total!=0)
+    else if(n==8 && total!=0)
     {
         cout<<"\n\t\t\t Are you Sure...[y,n] ";
         cin>>s;
@@ -1259,15 +1743,28 @@ void student ::delet()
             temf.open("temp1.txt");
             fstream file;
             file.open("studentRecord8.txt", ios::in);
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
+
             while(!file.eof())
             {
                 if(r!=roll)
                 {
-                    temf<<" "<<name<<" "<<roll<<" "<<class_<<" "<<address<<" "<<phn_no<<"\n";
+                    temf<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
                 }
 
-                file>> name>>roll>>class_>>address>>phn_no;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
             }
             file.close();
             temf.close();
@@ -1278,6 +1775,7 @@ void student ::delet()
             cout<<"\n\n\n # Press Enter Key for Main menu...!";
 
         }
+
         else
         {
             cout<<"\n\t\t\t Record not Deleted..!";
@@ -1287,7 +1785,7 @@ void student ::delet()
 
     }
 
-    else if(n=9&&total!=0)
+    else if(n==9 && total!=0)
     {
         cout<<"\n\t\t\t Are you Sure...[y,n] ";
         cin>>s;
@@ -1297,15 +1795,28 @@ void student ::delet()
             temf.open("temp1.txt");
             fstream file;
             file.open("studentRecord9.txt", ios::in);
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
+
             while(!file.eof())
             {
                 if(r!=roll)
                 {
-                    temf<<" "<<name<<" "<<roll<<" "<<class_<<" "<<address<<" "<<phn_no<<"\n";
+                    temf<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
                 }
 
-                file>> name>>roll>>class_>>address>>phn_no;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
             }
             file.close();
             temf.close();
@@ -1316,6 +1827,7 @@ void student ::delet()
             cout<<"\n\n\n # Press Enter Key for Main menu...!";
 
         }
+
         else
         {
             cout<<"\n\t\t\t Record not Deleted..!";
@@ -1325,7 +1837,7 @@ void student ::delet()
 
     }
 
-    else if(n=10&&total!=0)
+    else if(n==10 && total!=0)
     {
         cout<<"\n\t\t\t Are you Sure...[y,n] ";
         cin>>s;
@@ -1335,15 +1847,28 @@ void student ::delet()
             temf.open("temp1.txt");
             fstream file;
             file.open("studentRecord10.txt", ios::in);
-            file>> name>>roll>>class_>>address>>phn_no;
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
+
             while(!file.eof())
             {
                 if(r!=roll)
                 {
-                    temf<<" "<<name<<" "<<roll<<" "<<class_<<" "<<address<<" "<<phn_no<<"\n";
+                    temf<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
                 }
 
-                file>> name>>roll>>class_>>address>>phn_no;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
             }
             file.close();
             temf.close();
@@ -1354,6 +1879,7 @@ void student ::delet()
             cout<<"\n\n\n # Press Enter Key for Main menu...!";
 
         }
+
         else
         {
             cout<<"\n\t\t\t Record not Deleted..!";
