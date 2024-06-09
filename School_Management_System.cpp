@@ -209,7 +209,7 @@ menustart:
 
 void student::insert()
 {
-    system("cls");
+x:  system("cls");
     fstream file;
     cout<<"\n----------------------------------------------------------------------";
     cout<<"\n------------------------- Add Student Details ------------------------";
@@ -220,6 +220,14 @@ void student::insert()
     cin >> roll;
     cout << "\t\t\t Enter Class: ";
     cin >> class_;
+    if(class_<0 || class_>10)
+    {
+        cout<<"\n\n\t\t\tClass Invalid!";
+        cout<<"\n\n\n # Press Enter key for try Again...!";
+        getch();
+        goto x;
+
+    }
     cin.ignore();
     cout << "\t\t\t Enter Address: ";
     getline(cin, address);
@@ -291,7 +299,7 @@ void student::insert()
 }
 void student::display()
 {
-    system("cls");
+y:  system("cls");
     fstream file;
     int n, total=0;
     cout<<"\n-----------------------------------------------------------------------"<<endl;
@@ -754,13 +762,16 @@ void student::display()
     }
     else
     {
-        display();
+        cout<<"\n\n\t\t\tClass Invalid!";
+        cout<<"\n\n # Press Enter key for try Again...!";
+        getch();
+        goto y;
     }
 }
 
 void student::search()
 {
-    fstream file;
+z:  fstream file;
     if(choice!=4)
     {
         system("cls");
@@ -769,6 +780,14 @@ void student::search()
     }
     cout<<"\n\t\t\t Enter Class(1-10): ";
     cin>>n;
+    if(n<1||n>10)
+    {
+        cout<<"\n\n\t\t\tClass Invalid!";
+        cout<<"\n\n # Press Enter key for try Again...!";
+        getch();
+        goto z;
+
+    }
     cout<<"\t\t\t Enter Roll: ";
     cin>>r;
     if(n==1)
@@ -1358,6 +1377,15 @@ void student::search()
             else if(choice!=4)
                 cout<<"\n\n # Press Enter Key for Main menu...!";
         }
+
+    }
+
+    else
+    {
+        cout<<"\n\n\t\t\tError!";
+        cout<<"\n\n # Press Enter key for try Again...!";
+        getch();
+        goto z;
 
     }
 }
