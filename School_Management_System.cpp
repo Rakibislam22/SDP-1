@@ -1,9 +1,10 @@
 #include<iostream>
-#include <cstdio>
+#include<cstdio>
 #include<fstream>
+#include <unistd.h>
 #include<cstdlib>    // for exit() function
 #include<conio.h>    // for getch() function
-#include <cstdio>    // for system("cls") function
+#include<cstdio>    // for system("cls") function
 
 using namespace std;
 class student
@@ -11,10 +12,10 @@ class student
 
 private:
     string name,address,phn_no;
-    int class_,roll;
+    int class_,roll,fee,demand,due;
 public:
     string usn;
-    int choice,n,r,pass, total=0;
+    int s,choice,n,r,pass,total=0 ;
     void menu();
     void PasswordCng();
     void submenu();
@@ -22,7 +23,57 @@ public:
     void display();
     void search();
     void delet();
+    void feesMenu();
+    void newFeesAdd();
+    void displayFees();
+    void studentFees();
+    void updateFees();
 };
+
+enum IN
+{
+
+    IN_BACK = 8,
+    IN_RET = 13
+
+};
+
+std::string hidingPas(
+    char sp = '*')
+{
+    string passwd = "";
+    char ch_ipt;
+
+    while (true)
+    {
+
+        ch_ipt = getch();
+
+        if (ch_ipt == IN::IN_RET)
+        {
+            cout << endl;
+            return passwd;
+        }
+        else if (ch_ipt == IN::IN_BACK
+                 && passwd.length() != 0)
+        {
+            passwd.pop_back();
+
+            cout << "\b \b";
+
+            continue;
+        }
+
+        else if (ch_ipt == IN::IN_BACK
+                 && passwd.length() == 0)
+        {
+            continue;
+        }
+
+        passwd.push_back(ch_ipt);
+        cout << sp;
+    }
+}
 
 void student :: PasswordCng()
 {
@@ -31,11 +82,11 @@ d:
     system("cls");
     fstream file;
     cout<<"\n\t\t\t Enter Current PIN: ";
-    cin>>passC;
+    passC = stoi(hidingPas());
     cout<<"\t\t\t Enter New PIN: ";
-    cin>>passN;
+    passN = stoi(hidingPas()) ;
     cout<<"\t\t\t Enter Conform PIN: ";
-    cin>>passCo;
+    passCo = stoi(hidingPas());
     file.open("PIN.txt", ios::in);
     file>>passCI;
     if(!file)
@@ -81,11 +132,10 @@ void student :: menu()
 {
 a:
     system("cls");
-    int s;
     cout<<"\t\t\t\t-----------------------------"<<endl;
     cout<<"\t\t\t\t| SCHOOL MANAGEMENT SYSTEM  |"<<endl;
     cout<<"\t\t\t\t-----------------------------"<<endl;
-    cout<<"\n\t\t\t\t   1. Teacher LogIn "<<endl;
+    cout<<"\n\t\t\t\t   1. Admin LogIn "<<endl;
     cout<<"\t\t\t\t   2. Student Info "<<endl;
     cout<<"\t\t\t\t   3. Cancel "<<endl<<endl;
     cout<<"\t\t\t\t  ------------------------"<<endl;
@@ -105,7 +155,7 @@ a:
         cout<<"\n\n\t\t\t Enter username: ";
         cin>>usn;
         cout<<"\n\t\t\t Enter PIN: ";
-        cin>>pass1;
+        pass1 = stoi(hidingPas());
         fstream file;
         file.open("PIN.txt",ios :: in);
         if(!file)
@@ -132,9 +182,18 @@ a:
 
     case 2:
         search();
+        char de;
+        cout<<"\n\n\t\t\t Do you want to see Fees Details [Y/N]: ";
+        cin>>de;
+        cout<<endl;
+        if(de == 'Y' || de == 'y')
+        {
+            studentFees();
+        }
+        else cout<<"\n # Press Enter key for Main menu...!";
         break;
     case 3:
-        cout<<"\n\n\t\t\t  Thanks for using our software."<<endl<<"\n\t\t\tAll rights reserved, Akatsuki 2024."<<endl<<endl<<endl;
+        cout<<"\n\n\t\t\t  Thanks for using our software."<<endl<<"\n\t\t\tAll rights reserved, (c) 2024 Akatsuki."<<endl<<endl<<endl;
         exit(0);
         break;
 
@@ -160,11 +219,12 @@ menustart:
     cout<<"\t\t\t\t 2. Display student Record"<<endl;
     cout<<"\t\t\t\t 3. Search student Record"<<endl;
     cout<<"\t\t\t\t 4. Delete student Record"<<endl;
-    cout<<"\t\t\t\t 5. Change PIN"<<endl;
-    cout<<"\t\t\t\t 6. LogOut"<<endl<<endl;
+    cout<<"\t\t\t\t 5. Fees Details"<<endl;
+    cout<<"\t\t\t\t 6. Change PIN"<<endl;
+    cout<<"\t\t\t\t 7. LogOut"<<endl<<endl;
 
     cout<<"\t\t\t\t------------------------------"<<endl;
-    cout<<"\t\t\t\t Choose Option : [1/2/3/4/5]"<<endl;
+    cout<<"\t\t\t\t Choose Option : [1/2/3/4/5/6/7]"<<endl;
     cout<<"\t\t\t\t------------------------------"<<endl;
     cout<<"Enter Your Choose: ";
     cin>>choice;
@@ -192,12 +252,16 @@ menustart:
         break;
 
     case 5:
+        feesMenu();
+        break;
+    case 6:
         PasswordCng();
         break;
 
-    case 6:
-        cout<<"\n\n\t\t\t  Thanks for using our software."<<endl<<"\n\t\t\tAll rights reserved, Akatsuki 2024."<<endl<<endl<<endl;
-        exit(0);
+    case 7:
+        cout<<"\n\n\t\t\t\t   LOGOUT!\n\n\t\t\t  Thanks for using our software."<<endl<<"\n\t\t\tAll rights reserved, (c) 2024 Akatsuki."<<endl<<endl<<endl;
+        usleep(5000000);
+        menu();
     default:
         cout<<"\n\t\t\t\t Invalid Choice..! Please Try Again..!";
         cout<<"\n\n # Press Enter key for Main menu...!";
@@ -209,7 +273,8 @@ menustart:
 
 void student::insert()
 {
-x:  system("cls");
+x:
+    system("cls");
     fstream file;
     cout<<"\n----------------------------------------------------------------------";
     cout<<"\n------------------------- Add Student Details ------------------------";
@@ -235,543 +300,107 @@ x:  system("cls");
     getline(cin, phn_no);
     cout << "\n\t\t\t Record Saved..! "<<endl;
 
-    if(class_==1)
-    {
-        file.open("studentRecord1.txt", ios::app | ios::out);
-        file<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
-        file.close();
-    }
-    else if(class_==2)
-    {
-        file.open("studentRecord2.txt", ios::app | ios::out);
-        file<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
-        file.close();
-    }
-    else if(class_==3)
-    {
-        file.open("studentRecord3.txt", ios::app | ios::out);
-        file<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
-        file.close();
-    }
-    else if(class_==4)
-    {
-        file.open("studentRecord4.txt", ios::app | ios::out);
-        file<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
-        file.close();
-    }
-    else if(class_==5)
-    {
-        file.open("studentRecord5.txt", ios::app | ios::out);
-        file<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
-        file.close();
-    }
-    else if(class_==6)
-    {
-        file.open("studentRecord6.txt", ios::app | ios::out);
-        file<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
-        file.close();
-    }
-    else if(class_==7)
-    {
-        file.open("studentRecord7.txt", ios::app | ios::out);
-        file<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
-        file.close();
-    }
-    else if(class_==8)
-    {
-        file.open("studentRecord8.txt", ios::app | ios::out);
-        file<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
-        file.close();
-    }
-    else if(class_==9)
-    {
-        file.open("studentRecord9.txt", ios::app | ios::out);
-        file<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
-        file.close();
-    }
-    else if(class_==10)
-    {
-        file.open("studentRecord10.txt", ios::app | ios::out);
-        file<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
-        file.close();
-    }
-
+    file.open("studentRecord.txt", ios::app | ios::out);
+    file<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
+    file.close();
 }
 void student::display()
 {
-y:  system("cls");
+y:
+    system("cls");
     fstream file;
     int n, total=0;
     cout<<"\n-----------------------------------------------------------------------"<<endl;
     cout<<"\n-------------------------- Student Details ----------------------------"<<endl;
     cout<<"\n\t\t\t Enter Class(1-10): ";
     cin>>n;
-    if(n==1)
-    {
-        file.open("studentRecord1.txt", ios::in);
-        if(!file)
-        {
-            cout<<"\n\t\t# No Data is Present..!";
-            file.close();
-            cout<<"\n\n # Press Enter key for Main menu...!";
-        }
-        else
-        {
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-
-            while(!file.eof())
-            {
-                total++;
-                cout<<"\n\t\t\t Student Name: "<<name<<endl;
-                cout<<"\t\t\t Roll: "<<roll<<endl;
-                cout<<"\t\t\t Class: "<<class_<<endl;
-                cout<<"\t\t\t Address: "<<address<<endl;
-                cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
-            }
-            if(total==0)
-            {
-                cout<<"\n\t\t# No Data is Present..!";
-                cout<<"\n\n # Press Enter key for Main menu...!";
-            }
-            else
-                cout<<"\n\t\t\t# Total "<<total<<" Student Found! ";
-            cout<<"\n\n # Press Enter key for Main menu...!";
-        }
-        file.close();
-    }
-    else if(n==2)
-    {
-        file.open("studentRecord2.txt", ios::in);
-        if(!file)
-        {
-            cout<<"\n\t\t# No Data is Present..!";
-            file.close();
-            cout<<"\n\n # Press Enter key for Main menu...!";
-        }
-        else
-        {
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-
-            while(!file.eof())
-            {
-                total++;
-                cout<<"\n\t\t\t Student Name: "<<name<<endl;
-                cout<<"\t\t\t Roll: "<<roll<<endl;
-                cout<<"\t\t\t Class: "<<class_<<endl;
-                cout<<"\t\t\t Address: "<<address<<endl;
-                cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
-            }
-            if(total==0)
-            {
-                cout<<"\n\t\t# No Data is Present..!";
-                cout<<"\n\n # Press Enter key for Main menu...!";
-            }
-            else
-                cout<<"\n\t\t\t# Total "<<total<<" Student Found! ";
-            cout<<"\n\n # Press Enter key for Main menu...!";
-        }
-        file.close();
-    }
-    else if(n==3)
-    {
-        file.open("studentRecord3.txt", ios::in);
-        if(!file)
-        {
-            cout<<"\n\t\t# No Data is Present..!";
-            file.close();
-            cout<<"\n\n # Press Enter key for Main menu...!";
-        }
-        else
-        {
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-
-            while(!file.eof())
-            {
-                total++;
-                cout<<"\n\t\t\t Student Name: "<<name<<endl;
-                cout<<"\t\t\t Roll: "<<roll<<endl;
-                cout<<"\t\t\t Class: "<<class_<<endl;
-                cout<<"\t\t\t Address: "<<address<<endl;
-                cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
-            }
-            if(total==0)
-            {
-                cout<<"\n\t\t# No Data is Present..!";
-                cout<<"\n\n # Press Enter key for Main menu...!";
-            }
-            else
-                cout<<"\n\t\t\t# Total "<<total<<" Student Found! ";
-            cout<<"\n\n # Press Enter key for Main menu...!";
-        }
-        file.close();
-    }
-    else if(n==4)
-    {
-        file.open("studentRecord4.txt", ios::in);
-        if(!file)
-        {
-            cout<<"\n\t\t# No Data is Present..!";
-            file.close();
-            cout<<"\n\n # Press Enter key for Main menu...!";
-        }
-        else
-        {
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-
-            while(!file.eof())
-            {
-                total++;
-                cout<<"\n\t\t\t Student Name: "<<name<<endl;
-                cout<<"\t\t\t Roll: "<<roll<<endl;
-                cout<<"\t\t\t Class: "<<class_<<endl;
-                cout<<"\t\t\t Address: "<<address<<endl;
-                cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
-            }
-            if(total==0)
-            {
-                cout<<"\n\t\t# No Data is Present..!";
-                cout<<"\n\n # Press Enter for Main menu...!";
-            }
-            else
-                cout<<"\n\t\t\t# Total "<<total<<" Student Found! ";
-            cout<<"\n\n # Press Enter key for Main menu...!";
-        }
-        file.close();
-    }
-    else if(n==5)
-    {
-        file.open("studentRecord5.txt", ios::in);
-        if(!file)
-        {
-            cout<<"\n\t\t# No Data is Present..!";
-            file.close();
-            cout<<"\n\n # Press Enter key for Main menu...!";
-        }
-        else
-        {
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-            while(!file.eof())
-            {
-                total++;
-                cout<<"\n\t\t\t Student Name: "<<name<<endl;
-                cout<<"\t\t\t Roll: "<<roll<<endl;
-                cout<<"\t\t\t Class: "<<class_<<endl;
-                cout<<"\t\t\t Address: "<<address<<endl;
-                cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
-            }
-            if(total==0)
-            {
-                cout<<"\n\t\t# No Data is Present..!";
-                cout<<"\n\n # Press Enter key for Main menu...!";
-            }
-            else
-                cout<<"\n\t\t\t# Total "<<total<<" Student Found! ";
-            cout<<"\n\n # Press Enter key for Main menu...!";
-        }
-        file.close();
-    }
-    else if(n==6)
-    {
-        file.open("studentRecord6.txt", ios::in);
-        if(!file)
-        {
-            cout<<"\n\t\t# No Data is Present..!";
-            file.close();
-            cout<<"\n\n # Press Enter key for Main menu...!";
-        }
-        else
-        {
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-            while(!file.eof())
-            {
-                total++;
-                cout<<"\n\t\t\t Student Name: "<<name<<endl;
-                cout<<"\t\t\t Roll: "<<roll<<endl;
-                cout<<"\t\t\t Class: "<<class_<<endl;
-                cout<<"\t\t\t Address: "<<address<<endl;
-                cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
-            }
-            if(total==0)
-            {
-                cout<<"\n\t\t# No Data is Present..!";
-                cout<<"\n\n # Press Enter key for Main menu...!";
-            }
-            else
-                cout<<"\n\t\t\t# Total "<<total<<" Student Found! ";
-            cout<<"\n\n # Press Enter key for Main menu...!";
-        }
-        file.close();
-    }
-    else if(n==7)
-    {
-        file.open("studentRecord7.txt", ios::in);
-        if(!file)
-        {
-            cout<<"\n\t\t# No Data is Present..!";
-            file.close();
-            cout<<"\n\n # Press Enter key for Main menu...!";
-        }
-        else
-        {
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-            while(!file.eof())
-            {
-                total++;
-                cout<<"\n\t\t\t Student Name: "<<name<<endl;
-                cout<<"\t\t\t Roll: "<<roll<<endl;
-                cout<<"\t\t\t Class: "<<class_<<endl;
-                cout<<"\t\t\t Address: "<<address<<endl;
-                cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
-            }
-            if(total==0)
-            {
-                cout<<"\n\t\t# No Data is Present..!";
-                cout<<"\n\n # Press Enter key for Main menu...!";
-            }
-            else
-                cout<<"\n\t\t\t# Total "<<total<<" Student Found! ";
-            cout<<"\n\n # Press Enter key for Main menu...!";
-        }
-        file.close();
-    }
-    else if(n==8)
-    {
-        file.open("studentRecord8.txt", ios::in);
-        if(!file)
-        {
-            cout<<"\n\t\t# No Data is Present..!";
-            file.close();
-            cout<<"\n\n # Press Enter key for Main menu...!";
-        }
-        else
-        {
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-            while(!file.eof())
-            {
-                total++;
-                cout<<"\n\t\t\t Student Name: "<<name<<endl;
-                cout<<"\t\t\t Roll: "<<roll<<endl;
-                cout<<"\t\t\t Class: "<<class_<<endl;
-                cout<<"\t\t\t Address: "<<address<<endl;
-                cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
-                if(total==0)
-                {
-                    cout<<"\n\t\t# No Data is Present..!";
-                    cout<<"\n\n # Press Enter key for Main menu...!";
-                }
-                else
-                    cout<<"\n\t\t\t# Total "<<total<<" Student Found! ";
-                cout<<"\n\n # Press Enter key for Main menu...!";
-            }
-            file.close();
-        }
-    }
-    else if(n==9)
-    {
-        file.open("studentRecord9.txt", ios::in);
-        if(!file)
-        {
-            cout<<"\n\t\t# No Data is Present..!";
-            file.close();
-            cout<<"\n\n # Press Enter key for Main menu...!";
-        }
-        else
-        {
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-            while(!file.eof())
-            {
-                total++;
-                cout<<"\n\t\t\t Student Name: "<<name<<endl;
-                cout<<"\t\t\t Roll: "<<roll<<endl;
-                cout<<"\t\t\t Class: "<<class_<<endl;
-                cout<<"\t\t\t Address: "<<address<<endl;
-                cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
-                if(total==0)
-                {
-                    cout<<"\n\t\t# No Data is Present..!";
-                    cout<<"\n\n # Press Enter key for Main menu...!";
-                }
-                else
-                    cout<<"\n\t\t\t# Total "<<total<<" Student Found! ";
-                cout<<"\n\n # Press Enter key for Main menu...!";
-            }
-            file.close();
-        }
-    }
-    else if(n==10)
-    {
-        file.open("studentRecord10.txt", ios::in);
-        if(!file)
-        {
-            cout<<"\n\t\t# No Data is Present..!";
-            file.close();
-            cout<<"\n\n # Press Enter key for Main menu...!";
-        }
-        else
-        {
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-            while(!file.eof())
-            {
-                total++;
-                cout<<"\n\t\t\t Student Name: "<<name<<endl;
-                cout<<"\t\t\t Roll: "<<roll<<endl;
-                cout<<"\t\t\t Class: "<<class_<<endl;
-                cout<<"\t\t\t Address: "<<address<<endl;
-                cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
-            }
-            if(total==0)
-            {
-                cout<<"\n\t\t# No Data is Present..!";
-                cout<<"\n\n # Press Enter key for Main menu...!";
-            }
-            else
-                cout<<"\n\t\t\t# Total "<<total<<" Student Found! ";
-            cout<<"\n\n # Press Enter key for Main menu...!";
-        }
-        file.close();
-    }
-    else
+    if(n<0 || n>10)
     {
         cout<<"\n\n\t\t\tClass Invalid!";
-        cout<<"\n\n # Press Enter key for try Again...!";
+        cout<<"\n\n\n # Press Enter key for try Again...!";
         getch();
         goto y;
     }
+    else
+    {
+        file.open("studentRecord.txt", ios::in);
+        if(!file)
+        {
+            cout<<"\n\t\t# No Data is Present for class "<<n<<"..!";
+            file.close();
+            cout<<"\n\n # Press Enter key for Main menu...!";
+        }
+        else
+        {
+            while(!file.eof())
+            {
+                int c = 0;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
+
+                while(!file.eof())
+                {
+                    if( n == class_)
+                    {
+                        total++;
+                        cout<<"\n\t\t\t Student Name: "<<name<<endl;
+                        cout<<"\t\t\t Roll: "<<roll<<endl;
+                        cout<<"\t\t\t Class: "<<class_<<endl;
+                        cout<<"\t\t\t Address: "<<address<<endl;
+                        cout<<"\t\t\t Phone No: "<<phn_no<<endl;
+                        file.ignore();
+                        getline(file,name);
+                        file>>roll>>class_;
+                        file.ignore();
+                        getline(file,address);
+                        file>>phn_no;
+                        file.ignore();
+                    }
+                    else
+                    {
+                        file.ignore();
+                        getline(file,name);
+                        file>>roll>>class_;
+                        file.ignore();
+                        getline(file,address);
+                        file>>phn_no;
+                        file.ignore();
+                    }
+                }
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
+            }
+            file.close();
+            if(total==0)
+            {
+                cout<<"\n\t\t# No Data is Present for class "<<n<<"..!";
+                cout<<"\n\n # Press Enter key for Main menu...!";
+            }
+            else
+            {
+                cout<<"\n\t\t\t# Total "<<total<<" Student Found! ";
+                cout<<"\n\n # Press Enter key for Main menu...!";
+            }
+        }
+    }
+
 }
 
 void student::search()
 {
-z:  fstream file;
+z:
+    fstream file;
+    total = 0;
     if(choice!=4)
     {
         system("cls");
@@ -780,7 +409,7 @@ z:  fstream file;
     }
     cout<<"\n\t\t\t Enter Class(1-10): ";
     cin>>n;
-    if(n<1||n>10)
+    if(n<1 || n>10)
     {
         cout<<"\n\n\t\t\tClass Invalid!";
         cout<<"\n\n # Press Enter key for try Again...!";
@@ -790,623 +419,82 @@ z:  fstream file;
     }
     cout<<"\t\t\t Enter Roll: ";
     cin>>r;
-    if(n==1)
+
+    file.open("studentRecord.txt", ios::in);
+    if(!file)
     {
-        file.open("studentRecord1.txt", ios::in);
-        if(!file)
-        {
-            cout<<"\n\t\t# No Data is Present..!";
-            file.close();
+        cout<<"\n\t\t# No Data is Present..!";
+        file.close();
+        if(s != 2 )
             cout<<"\n\n # Press Enter Key for Main menu...!";
-        }
-        else
-        {
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-            while(!file.eof())
-            {
-                if(r==roll)
-                {
-                    total++;
-                    cout<<"\n\t\t\t Student Name: "<<name<<endl;
-                    cout<<"\t\t\t Roll: "<<roll<<endl;
-                    cout<<"\t\t\t Class: "<<class_<<endl;
-                    cout<<"\t\t\t Address: "<<address<<endl;
-                    cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                    file.ignore();
-                    getline(file,name);
-                    file>>roll>>class_;
-                    file.ignore();
-                    getline(file,address);
-                    file>>phn_no;
-                    file.ignore();
-                    break;
-                }
-
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
-            }
-            file.close();
-            if(total==0)
-            {
-                cout<<"\n\t\t# No Data is Present..!";
-                cout<<"\n\n # Press Enter Key for Main menu...!";
-            }
-
-            else if(choice!=4)
-                cout<<"\n\n # Press Enter Key for Main menu...!";
-        }
-
     }
-
-    else if(n==2)
-    {
-        file.open("studentRecord2.txt", ios::in);
-        if(!file)
-        {
-            cout<<"\n\t\t# No Data is Present..!";
-            file.close();
-            cout<<"\n\n # Press Enter Key for Main menu...!";
-        }
-        else
-        {
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-            while(!file.eof())
-            {
-
-                if(r==roll)
-                {
-                    total++;
-                    cout<<"\n\t\t\t Student Name: "<<name<<endl;
-                    cout<<"\t\t\t Roll: "<<roll<<endl;
-                    cout<<"\t\t\t Class: "<<class_<<endl;
-                    cout<<"\t\t\t Address: "<<address<<endl;
-                    cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                    file.ignore();
-                    getline(file,name);
-                    file>>roll>>class_;
-                    file.ignore();
-                    getline(file,address);
-                    file>>phn_no;
-                    file.ignore();
-                    break;
-                }
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
-            }
-            file.close();
-            if(total==0)
-            {
-                cout<<"\n\t\t# No Data is Present..!";
-                cout<<"\n\n # Press Enter Key for Main menu...!";
-            }
-
-            else if(choice!=4)
-                cout<<"\n\n # Press Enter Key for Main menu...!";
-        }
-
-    }
-
-    else if(n==3)
-    {
-        file.open("studentRecord3.txt", ios::in);
-        if(!file)
-        {
-            cout<<"\n\t\t# No Data is Present..!";
-            file.close();
-            cout<<"\n\n # Press Enter Key for Main menu...!";
-        }
-        else
-        {
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-            while(!file.eof())
-            {
-
-                if(r==roll)
-                {
-                    total++;
-                    cout<<"\n\t\t\t Student Name: "<<name<<endl;
-                    cout<<"\t\t\t Roll: "<<roll<<endl;
-                    cout<<"\t\t\t Class: "<<class_<<endl;
-                    cout<<"\t\t\t Address: "<<address<<endl;
-                    cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                    file.ignore();
-                    getline(file,name);
-                    file>>roll>>class_;
-                    file.ignore();
-                    getline(file,address);
-                    file>>phn_no;
-                    file.ignore();
-                    break;
-                }
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
-            }
-            file.close();
-            if(total==0)
-            {
-                cout<<"\n\t\t# No Data is Present..!";
-                cout<<"\n\n # Press Enter Key for Main menu...!";
-            }
-
-            else if(choice!=4)
-                cout<<"\n\n # Press Enter Key for Main menu...!";
-        }
-
-    }
-
-    else if(n==4)
-    {
-        file.open("studentRecord4.txt", ios::in);
-        if(!file)
-        {
-            cout<<"\n\t\t# No Data is Present..!";
-            file.close();
-            cout<<"\n\n # Press Enter Key for Main menu...!";
-        }
-        else
-        {
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-            while(!file.eof())
-            {
-
-                if(r==roll)
-                {
-                    total++;
-                    cout<<"\n\t\t\t Student Name: "<<name<<endl;
-                    cout<<"\t\t\t Roll: "<<roll<<endl;
-                    cout<<"\t\t\t Class: "<<class_<<endl;
-                    cout<<"\t\t\t Address: "<<address<<endl;
-                    cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                    file.ignore();
-                    getline(file,name);
-                    file>>roll>>class_;
-                    file.ignore();
-                    getline(file,address);
-                    file>>phn_no;
-                    file.ignore();
-                    break;
-                }
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
-            }
-            file.close();
-            if(total==0)
-            {
-                cout<<"\n\t\t# No Data is Present..!";
-                cout<<"\n\n # Press Enter Key for Main menu...!";
-            }
-
-            else if(choice!=4)
-                cout<<"\n\n # Press Enter Key for Main menu...!";
-        }
-
-    }
-
-    else if(n==5)
-    {
-        file.open("studentRecord5.txt", ios::in);
-        if(!file)
-        {
-            cout<<"\n\t\t# No Data is Present..!";
-            file.close();
-            cout<<"\n\n # Press Enter Key for Main menu...!";
-        }
-        else
-        {
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-            while(!file.eof())
-            {
-
-                if(r==roll)
-                {
-                    total++;
-                    cout<<"\n\t\t\t Student Name: "<<name<<endl;
-                    cout<<"\t\t\t Roll: "<<roll<<endl;
-                    cout<<"\t\t\t Class: "<<class_<<endl;
-                    cout<<"\t\t\t Address: "<<address<<endl;
-                    cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                    file.ignore();
-                    getline(file,name);
-                    file>>roll>>class_;
-                    file.ignore();
-                    getline(file,address);
-                    file>>phn_no;
-                    file.ignore();
-                    break;
-                }
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
-            }
-            file.close();
-            if(total==0)
-            {
-                cout<<"\n\t\t# No Data is Present..!";
-                cout<<"\n\n # Press Enter Key for Main menu...!";
-            }
-
-            else if(choice!=4)
-                cout<<"\n\n # Press Enter Key for Main menu...!";
-        }
-
-    }
-
-    else if(n==6)
-    {
-        file.open("studentRecord6.txt", ios::in);
-        if(!file)
-        {
-            cout<<"\n\t\t# No Data is Present..!";
-            file.close();
-            cout<<"\n\n # Press Enter Key for Main menu...!";
-        }
-        else
-        {
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-            while(!file.eof())
-            {
-
-                if(r==roll)
-                {
-                    total++;
-                    cout<<"\n\t\t\t Student Name: "<<name<<endl;
-                    cout<<"\t\t\t Roll: "<<roll<<endl;
-                    cout<<"\t\t\t Class: "<<class_<<endl;
-                    cout<<"\t\t\t Address: "<<address<<endl;
-                    cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                    file.ignore();
-                    getline(file,name);
-                    file>>roll>>class_;
-                    file.ignore();
-                    getline(file,address);
-                    file>>phn_no;
-                    file.ignore();
-                    break;
-                }
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
-            }
-            file.close();
-            if(total==0)
-            {
-                cout<<"\n\t\t# No Data is Present..!";
-                cout<<"\n\n # Press Enter Key for Main menu...!";
-            }
-
-            else if(choice!=4)
-                cout<<"\n\n # Press Enter Key for Main menu...!";
-        }
-
-    }
-
-    else if(n==7)
-    {
-        file.open("studentRecord7.txt", ios::in);
-        if(!file)
-        {
-            cout<<"\n\t\t# No Data is Present..!";
-            file.close();
-            cout<<"\n\n # Press Enter Key for Main menu...!";
-        }
-        else
-        {
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-            while(!file.eof())
-            {
-
-                if(r==roll)
-                {
-                    total++;
-                    cout<<"\n\t\t\t Student Name: "<<name<<endl;
-                    cout<<"\t\t\t Roll: "<<roll<<endl;
-                    cout<<"\t\t\t Class: "<<class_<<endl;
-                    cout<<"\t\t\t Address: "<<address<<endl;
-                    cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                    file.ignore();
-                    getline(file,name);
-                    file>>roll>>class_;
-                    file.ignore();
-                    getline(file,address);
-                    file>>phn_no;
-                    file.ignore();
-                    break;
-                }
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
-            }
-            file.close();
-            if(total==0)
-            {
-                cout<<"\n\t\t# No Data is Present..!";
-                cout<<"\n\n # Press Enter Key for Main menu...!";
-            }
-
-            else if(choice!=4)
-                cout<<"\n\n # Press Enter Key for Main menu...!";
-        }
-
-    }
-
-    else if(n==8)
-    {
-        file.open("studentRecord8.txt", ios::in);
-        if(!file)
-        {
-            cout<<"\n\t\t# No Data is Present..!";
-            file.close();
-            cout<<"\n\n # Press Enter Key for Main menu...!";
-        }
-        else
-        {
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-            while(!file.eof())
-            {
-
-                if(r==roll)
-                {
-                    total++;
-                    cout<<"\n\t\t\t Student Name: "<<name<<endl;
-                    cout<<"\t\t\t Roll: "<<roll<<endl;
-                    cout<<"\t\t\t Class: "<<class_<<endl;
-                    cout<<"\t\t\t Address: "<<address<<endl;
-                    cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                    file.ignore();
-                    getline(file,name);
-                    file>>roll>>class_;
-                    file.ignore();
-                    getline(file,address);
-                    file>>phn_no;
-                    file.ignore();
-                    break;
-                }
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
-            }
-            file.close();
-            if(total==0)
-            {
-                cout<<"\n\t\t# No Data is Present..!";
-                cout<<"\n\n # Press Enter Key for Main menu...!";
-            }
-
-            else if(choice!=4)
-                cout<<"\n\n # Press Enter Key for Main menu...!";
-        }
-
-    }
-
-    else if(n==9)
-    {
-        file.open("studentRecord9.txt", ios::in);
-        if(!file)
-        {
-            cout<<"\n\t\t# No Data is Present..!";
-            file.close();
-            cout<<"\n\n # Press Enter Key for Main menu...!";
-        }
-        else
-        {
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-            while(!file.eof())
-            {
-
-                if(r==roll)
-                {
-                    total++;
-                    cout<<"\n\t\t\t Student Name: "<<name<<endl;
-                    cout<<"\t\t\t Roll: "<<roll<<endl;
-                    cout<<"\t\t\t Class: "<<class_<<endl;
-                    cout<<"\t\t\t Address: "<<address<<endl;
-                    cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                    file.ignore();
-                    getline(file,name);
-                    file>>roll>>class_;
-                    file.ignore();
-                    getline(file,address);
-                    file>>phn_no;
-                    file.ignore();
-                    break;
-                }
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
-            }
-            file.close();
-            if(total==0)
-            {
-                cout<<"\n\t\t# No Data is Present..!";
-                cout<<"\n\n # Press Enter Key for Main menu...!";
-            }
-
-            else if(choice!=4)
-                cout<<"\n\n # Press Enter Key for Main menu...!";
-        }
-
-    }
-
-    else if(n==10)
-    {
-        file.open("studentRecord10.txt", ios::in);
-        if(!file)
-        {
-            cout<<"\n\t\t# No Data is Present..!";
-            file.close();
-            cout<<"\n\n # Press Enter Key for Main menu...!";
-        }
-        else
-        {
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-            while(!file.eof())
-            {
-
-                if(r==roll)
-                {
-                    total++;
-                    cout<<"\n\t\t\t Student Name: "<<name<<endl;
-                    cout<<"\t\t\t Roll: "<<roll<<endl;
-                    cout<<"\t\t\t Class: "<<class_<<endl;
-                    cout<<"\t\t\t Address: "<<address<<endl;
-                    cout<<"\t\t\t Phone No: "<<phn_no<<endl;
-                    file.ignore();
-                    getline(file,name);
-                    file>>roll>>class_;
-                    file.ignore();
-                    getline(file,address);
-                    file>>phn_no;
-                    file.ignore();
-                    break;
-                }
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
-            }
-            file.close();
-            if(total==0)
-            {
-                cout<<"\n\t\t# No Data is Present..!";
-                cout<<"\n\n # Press Enter Key for Main menu...!";
-            }
-
-            else if(choice!=4)
-                cout<<"\n\n # Press Enter Key for Main menu...!";
-        }
-
-    }
-
     else
     {
-        cout<<"\n\n\t\t\tError!";
-        cout<<"\n\n # Press Enter key for try Again...!";
-        getch();
-        goto z;
+        file.ignore();
+        getline(file,name);
+        file>>roll>>class_;
+        file.ignore();
+        getline(file,address);
+        file>>phn_no;
+        file.ignore();
+        while(!file.eof())
+        {
 
+            if(r==roll && n == class_)
+            {
+                total++;
+                cout<<"\n\t\t\t Student Name: "<<name<<endl;
+                cout<<"\t\t\t Roll: "<<roll<<endl;
+                cout<<"\t\t\t Class: "<<class_<<endl;
+                cout<<"\t\t\t Address: "<<address<<endl;
+                cout<<"\t\t\t Phone No: "<<phn_no<<endl;
+                file.ignore();
+                getline(file,name);
+                file>>roll>>class_;
+                file.ignore();
+                getline(file,address);
+                file>>phn_no;
+                file.ignore();
+                break;
+            }
+            file.ignore();
+            getline(file,name);
+            file>>roll>>class_;
+            file.ignore();
+            getline(file,address);
+            file>>phn_no;
+            file.ignore();
+        }
+        file.close();
+        if(total==0)
+        {
+            cout<<"\n\t\t# No Data is Present..!";
+            if(s != 2 )
+                cout<<"\n\n # Press Enter Key for Main menu...!";
+        }
+
+        else if(choice!=4 && s != 2 )
+            cout<<"\n\n # Press Enter Key for Main menu...!";
     }
 }
 
-void student ::delet()
+void student :: delet()
 {
     system("cls");
     cout<<"\n-----------------------------------------------------------------------"<<endl;
     cout<<"\n---------------------- Delete Student Details -------------------------"<<endl;
     search();
     char s;
-    if(n==1 && total!=0)
+    if(total!=0)
     {
         cout<<"\n\t\t\t Are you Sure...[y,n] ";
         cin>>s;
         if(s=='y'||s=='Y')
         {
             ofstream temf;
-            temf.open("temp1.txt");
+            temf.open("temp.txt");
             fstream file;
-            file.open("studentRecord1.txt", ios::in);
+            file.open("studentRecord.txt", ios::in);
             file.ignore();
             getline(file,name);
             file>>roll>>class_;
@@ -1417,7 +505,17 @@ void student ::delet()
 
             while(!file.eof())
             {
-                if(r!=roll)
+                if(r != roll && n == class_)
+                {
+                    temf<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
+                }
+
+                else if(r == roll && n != class_)
+                {
+                    temf<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
+                }
+
+                else if(r!=roll && n != class_)
                 {
                     temf<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
                 }
@@ -1432,8 +530,8 @@ void student ::delet()
             }
             file.close();
             temf.close();
-            remove("studentRecord1.txt");
-            rename("temp1.txt","studentRecord1.txt");
+            remove("studentRecord.txt");
+            rename("temp.txt","studentRecord.txt");
 
             cout<<"\n\t\t\t Record Deleted..!";
             cout<<"\n\n\n # Press Enter Key for Main menu...!";
@@ -1448,475 +546,205 @@ void student ::delet()
         }
 
     }
+}
 
-    else if(n==2 && total!=0)
+void student :: feesMenu()
+{
+menustart1:
+    char x;
+    system("cls");
+    cout<<"\n\t\t\t\t          F E E S            "<<endl;
+    cout<<"\t\t\t\t-----------------------------"<<endl;
+    cout<<"\n\t\t\t\t 1. Add New Fees Details"<<endl;
+    cout<<"\t\t\t\t 2. Display Fees Details"<<endl;
+    cout<<"\t\t\t\t 3. Update Fees"<<endl;
+    cout<<"\t\t\t\t 4. Back to Previous menu"<<endl<<endl;
+
+    cout<<"\t\t\t\t------------------------------"<<endl;
+    cout<<"\t\t\t\t Choose Option : [1/2/3/4]"<<endl;
+    cout<<"\t\t\t\t------------------------------"<<endl;
+    cout<<"Enter Your Choose: ";
+    cin>>choice;
+
+    switch(choice)
     {
-        cout<<"\n\t\t\t Are you Sure...[y,n] ";
-        cin>>s;
-        if(s=='y'||s=='Y')
+    case 1:
+        do
         {
-            ofstream temf;
-            temf.open("temp1.txt");
-            fstream file;
-            file.open("studentRecord2.txt", ios::in);
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
+            newFeesAdd();
+            cout<<"\n\t\t Add Another Student Record [Y,N]: ";
+            cin>>x;
+        }
+        while(x=='Y' || x=='y');
+        cout<<"\n\n # Press Enter key for fees menu...!";
+        break;
+    case 2:
+        displayFees();
+        break;
+    case 3:
+        //updateFees();
+        break;
+    case 4:
+        submenu();
+        break;
+    }
+    getch();
+    goto menustart1;
+}
+
+void student :: newFeesAdd()
+{
+x1:
+    system("cls");
+    fstream file;
+    cout<<"\n----------------------------------------------------------------------";
+    cout<<"\n------------------------- Add Fees Details ------------------------";
+
+    cout << "\n\n\t\t\t Enter Class: ";
+    cin >> class_;
+    if(class_<0 || class_>10)
+    {
+        cout<<"\n\n\t\t\tClass Invalid!";
+        cout<<"\n\n\n # Press Enter key for try Again...!";
+        getch();
+        goto x1;
+    }
+    cout << "\t\t\t Enter Roll: ";
+    cin >> roll;
+    cout << "\t\t\t Demand for this year: ";
+    cin>>demand;
+    cout << "\t\t\t Enter Payment Amount: ";
+    cin >> fee;
+    due = demand - fee ;
+    cout << "\n\t\t\t Record Saved..! "<<endl;
+
+
+    file.open("fees.txt", ios::app | ios::out);
+    file<<" "<<roll<<" "<<class_<<" "<<demand<<" "<<fee<<" "<<due<<"\n";
+    file.close();
+}
+
+void student :: displayFees()
+{
+y1:
+    system("cls");
+    fstream file;
+    int n, total=0;
+    cout<<"\n-----------------------------------------------------------------------"<<endl;
+    cout<<"\n------------------ Class Waise Student Fees Details --------------------"<<endl;
+    cout<<"\n\t\t\t Enter Class(1-10): ";
+    cin>>n;
+    cout<<endl;
+    if(n<0 || n>10)
+    {
+        cout<<"\n\n\t\t\tClass Invalid!";
+        cout<<"\n\n\n # Press Enter key for try Again...!";
+        getch();
+        goto y1;
+    }
+    else
+    {
+        file.open("fees.txt", ios::in);
+        if(!file)
+        {
+            cout<<"\n\t\t# No Data is Present..!";
+            file.close();
+            cout<<"\n\n # Press Enter key for Fees menu...!";
+        }
+        else
+        {
 
             while(!file.eof())
             {
-                if(r!=roll)
+                if( n == class_)
                 {
-                    temf<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
+                    total++;
+                    cout<<"\t\t\t Roll: "<<roll<<endl;
+                    cout<<"\t\t\t Class: "<<class_<<endl;
+                    cout<<"\t\t\t Demand for this year: "<<demand<<" TK"<<endl;
+                    cout<<"\t\t\t Last time Paid: "<<fee<<" TK"<<endl;
+                    cout<<"\t\t\t Due Payment: "<<due<<" TK"<<endl<<endl<<endl;
                 }
 
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
+                file>>roll>>class_>>demand>>fee>>due;
             }
-            file.close();
-            temf.close();
-            remove("studentRecord2.txt");
-            rename("temp1.txt","studentRecord2.txt");
-
-            cout<<"\n\t\t\t Record Deleted..!";
-            cout<<"\n\n\n # Press Enter Key for Main menu...!";
-
-        }
-
-        else
-        {
-            cout<<"\n\t\t\t Record not Deleted..!";
-
-            cout<<"\n\n\n # Press Enter Key for Main menu...!";
-        }
-
-    }
-
-    else if(n==3 && total!=0)
-    {
-        cout<<"\n\t\t\t Are you Sure...[y,n] ";
-        cin>>s;
-        if(s=='y'||s=='Y')
-        {
-            ofstream temf;
-            temf.open("temp1.txt");
-            fstream file;
-            file.open("studentRecord3.txt", ios::in);
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-
-            while(!file.eof())
+            if(total==0)
             {
-                if(r!=roll)
-                {
-                    temf<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
-                }
-
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
+                cout<<"\n\t\t# No Data is Present..!";
+                cout<<"\n\n # Press Enter key for fees menu...!";
             }
-            file.close();
-            temf.close();
-            remove("studentRecord3.txt");
-            rename("temp1.txt","studentRecord3.txt");
-
-            cout<<"\n\t\t\t Record Deleted..!";
-            cout<<"\n\n\n # Press Enter Key for Main menu...!";
-
-        }
-
-        else
-        {
-            cout<<"\n\t\t\t Record not Deleted..!";
-
-            cout<<"\n\n\n # Press Enter Key for Main menu...!";
-        }
-
-    }
-
-    else if(n==4 && total!=0)
-    {
-        cout<<"\n\t\t\t Are you Sure...[y,n] ";
-        cin>>s;
-        if(s=='y'||s=='Y')
-        {
-            ofstream temf;
-            temf.open("temp1.txt");
-            fstream file;
-            file.open("studentRecord4.txt", ios::in);
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-
-            while(!file.eof())
+            else
             {
-                if(r!=roll)
-                {
-                    temf<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
-                }
-
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
+                cout<<"\n\t\t\t# Total "<<total<<" Student details Found! ";
+                cout<<"\n\n # Press Enter key for fees menu...!";
             }
-            file.close();
-            temf.close();
-            remove("studentRecord4.txt");
-            rename("temp1.txt","studentRecord4.txt");
-
-            cout<<"\n\t\t\t Record Deleted..!";
-            cout<<"\n\n\n # Press Enter Key for Main menu...!";
-
         }
-
-        else
-        {
-            cout<<"\n\t\t\t Record not Deleted..!";
-
-            cout<<"\n\n\n # Press Enter Key for Main menu...!";
-        }
-
+        file.close();
     }
+}
 
-    else if(n==5 && total!=0)
+void student :: studentFees()
+{
+z:
+    fstream file;
+    total = 0;
+    if(s != 2)
     {
-        cout<<"\n\t\t\t Are you Sure...[y,n] ";
-        cin>>s;
-        if(s=='y'||s=='Y')
+        system("cls");
+        cout<<"\n-------------------------------------------------------------------"<<endl;
+        cout<<"\n---------------------- Updating Fees Data -------------------------"<<endl;
+
+        cout<<"\n\t\t\t Enter Class(1-10): ";
+        cin>>n;
+        if(n<1 || n>10)
         {
-            ofstream temf;
-            temf.open("temp1.txt");
-            fstream file;
-            file.open("studentRecord5.txt", ios::in);
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-
-            while(!file.eof())
-            {
-                if(r!=roll)
-                {
-                    temf<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
-                }
-
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
-            }
-            file.close();
-            temf.close();
-            remove("studentRecord5.txt");
-            rename("temp1.txt","studentRecord5.txt");
-
-            cout<<"\n\t\t\t Record Deleted..!";
-            cout<<"\n\n\n # Press Enter Key for Main menu...!";
+            cout<<"\n\n\t\t\tClass Invalid!";
+            cout<<"\n\n # Press Enter key for try Again...!";
+            getch();
+            goto z;
 
         }
-
-        else
-        {
-            cout<<"\n\t\t\t Record not Deleted..!";
-
-            cout<<"\n\n\n # Press Enter Key for Main menu...!";
-        }
-
+        cout<<"\t\t\t Enter Roll: ";
+        cin>>r;
     }
-
-    else if(n==6 && total!=0)
+    file.open("fees.txt", ios::in);
+    if(!file)
     {
-        cout<<"\n\t\t\t Are you Sure...[y,n] ";
-        cin>>s;
-        if(s=='y'||s=='Y')
-        {
-            ofstream temf;
-            temf.open("temp1.txt");
-            fstream file;
-            file.open("studentRecord6.txt", ios::in);
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-
-            while(!file.eof())
-            {
-                if(r!=roll)
-                {
-                    temf<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
-                }
-
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
-            }
-            file.close();
-            temf.close();
-            remove("studentRecord6.txt");
-            rename("temp1.txt","studentRecord6.txt");
-
-            cout<<"\n\t\t\t Record Deleted..!";
-            cout<<"\n\n\n # Press Enter Key for Main menu...!";
-
-        }
-
-        else
-        {
-            cout<<"\n\t\t\t Record not Deleted..!";
-
-            cout<<"\n\n\n # Press Enter Key for Main menu...!";
-        }
-
+        cout<<"\n\t\t# No Data is Present..!";
+        file.close();
+        cout<<"\n\n # Press Enter Key for Main menu...!";
     }
-
-    else if(n==7 && total!=0)
+    else
     {
-        cout<<"\n\t\t\t Are you Sure...[y,n] ";
-        cin>>s;
-        if(s=='y'||s=='Y')
+        file>>roll>>class_>>demand>>fee>>due;
+        while(!file.eof())
         {
-            ofstream temf;
-            temf.open("temp1.txt");
-            fstream file;
-            file.open("studentRecord7.txt", ios::in);
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-
-            while(!file.eof())
+            if(r==roll && n == class_ )
             {
-                if(r!=roll)
+                total++;
+                if(s != 2)
                 {
-                    temf<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
+                    cout<<"\n\t\t\t Roll: "<<roll<<endl;
+                    cout<<"\t\t\t Class: "<<class_<<endl;
                 }
+                cout<<"\t\t\t Demand for this year: "<<demand<<" TK"<<endl;
+                cout<<"\t\t\t Last time Paid: "<<fee<<" TK"<<endl;
+                cout<<"\t\t\t Due Payment: "<<due<<" TK"<<endl<<endl<<endl;
+                file>>roll>>class_>>demand>>fee>>due;
 
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
             }
-            file.close();
-            temf.close();
-            remove("studentRecord7.txt");
-            rename("temp1.txt","studentRecord7.txt");
 
-            cout<<"\n\t\t\t Record Deleted..!";
-            cout<<"\n\n\n # Press Enter Key for Main menu...!";
-
+            file>>roll>>class_>>demand>>fee>>due;
         }
-
-        else
+        file.close();
+        if(total==0)
         {
-            cout<<"\n\t\t\t Record not Deleted..!";
-
-            cout<<"\n\n\n # Press Enter Key for Main menu...!";
+            cout<<"\n\t\t# No Data is Present..!";
+            cout<<"\n\n # Press Enter Key for Main menu...!";
         }
 
+        else  cout<<"\n\n # Press Enter Key for Main menu...!";
     }
-
-    else if(n==8 && total!=0)
-    {
-        cout<<"\n\t\t\t Are you Sure...[y,n] ";
-        cin>>s;
-        if(s=='y'||s=='Y')
-        {
-            ofstream temf;
-            temf.open("temp1.txt");
-            fstream file;
-            file.open("studentRecord8.txt", ios::in);
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-
-            while(!file.eof())
-            {
-                if(r!=roll)
-                {
-                    temf<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
-                }
-
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
-            }
-            file.close();
-            temf.close();
-            remove("studentRecord8.txt");
-            rename("temp1.txt","studentRecord8.txt");
-
-            cout<<"\n\t\t\t Record Deleted..!";
-            cout<<"\n\n\n # Press Enter Key for Main menu...!";
-
-        }
-
-        else
-        {
-            cout<<"\n\t\t\t Record not Deleted..!";
-
-            cout<<"\n\n\n # Press Enter Key for Main menu...!";
-        }
-
-    }
-
-    else if(n==9 && total!=0)
-    {
-        cout<<"\n\t\t\t Are you Sure...[y,n] ";
-        cin>>s;
-        if(s=='y'||s=='Y')
-        {
-            ofstream temf;
-            temf.open("temp1.txt");
-            fstream file;
-            file.open("studentRecord9.txt", ios::in);
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-
-            while(!file.eof())
-            {
-                if(r!=roll)
-                {
-                    temf<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
-                }
-
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
-            }
-            file.close();
-            temf.close();
-            remove("studentRecord9.txt");
-            rename("temp1.txt","studentRecord9.txt");
-
-            cout<<"\n\t\t\t Record Deleted..!";
-            cout<<"\n\n\n # Press Enter Key for Main menu...!";
-
-        }
-
-        else
-        {
-            cout<<"\n\t\t\t Record not Deleted..!";
-
-            cout<<"\n\n\n # Press Enter Key for Main menu...!";
-        }
-
-    }
-
-    else if(n==10 && total!=0)
-    {
-        cout<<"\n\t\t\t Are you Sure...[y,n] ";
-        cin>>s;
-        if(s=='y'||s=='Y')
-        {
-            ofstream temf;
-            temf.open("temp1.txt");
-            fstream file;
-            file.open("studentRecord10.txt", ios::in);
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-
-            while(!file.eof())
-            {
-                if(r!=roll)
-                {
-                    temf<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
-                }
-
-                file.ignore();
-                getline(file,name);
-                file>>roll>>class_;
-                file.ignore();
-                getline(file,address);
-                file>>phn_no;
-                file.ignore();
-            }
-            file.close();
-            temf.close();
-            remove("studentRecord10.txt");
-            rename("temp1.txt","studentRecord10.txt");
-
-            cout<<"\n\t\t\t Record Deleted..!";
-            cout<<"\n\n\n # Press Enter Key for Main menu...!";
-
-        }
-
-        else
-        {
-            cout<<"\n\t\t\t Record not Deleted..!";
-
-            cout<<"\n\n\n # Press Enter Key for Main menu...!";
-        }
-
-    }
-
 }
 
 int main()
