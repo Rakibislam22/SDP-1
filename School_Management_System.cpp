@@ -309,7 +309,7 @@ void student::display()
 y:
     system("cls");
     fstream file;
-    int n, total=0;
+    int n = 0, total=0 ,class_ = 0;
     cout<<"\n-----------------------------------------------------------------------"<<endl;
     cout<<"\n-------------------------- Student Details ----------------------------"<<endl;
     cout<<"\n\t\t\t Enter Class(1-10): ";
@@ -629,7 +629,7 @@ void student :: displayFees()
 y1:
     system("cls");
     fstream file;
-    int n, total=0;
+    int n = 0, total=0 , class_ = 0;
     cout<<"\n-----------------------------------------------------------------------"<<endl;
     cout<<"\n------------------ Class Waise Student Fees Details --------------------"<<endl;
     cout<<"\n\t\t\t Enter Class(1-10): ";
