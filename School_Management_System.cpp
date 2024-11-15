@@ -15,7 +15,7 @@ private:
     int class_,roll,fee,demand,due;
 public:
     string usn;
-    int s,choice,n,r,pass,total=0 ;
+    int s,choice,choice2,n,r,pass,total=0 ;
     void menu();
     void PasswordCng();
     void submenu();
@@ -304,12 +304,13 @@ x:
     file<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
     file.close();
 }
+
 void student::display()
 {
 y:
     system("cls");
     fstream file;
-    int n = 0, total=0 ,class_ = 0;
+    int n = 0, total=0,class_ = 0;
     cout<<"\n-----------------------------------------------------------------------"<<endl;
     cout<<"\n-------------------------- Student Details ----------------------------"<<endl;
     cout<<"\n\t\t\t Enter Class(1-10): ";
@@ -564,9 +565,9 @@ menustart1:
     cout<<"\t\t\t\t Choose Option : [1/2/3/4]"<<endl;
     cout<<"\t\t\t\t------------------------------"<<endl;
     cout<<"Enter Your Choose: ";
-    cin>>choice;
+    cin>>choice2;
 
-    switch(choice)
+    switch(choice2)
     {
     case 1:
         do
@@ -582,10 +583,14 @@ menustart1:
         displayFees();
         break;
     case 3:
-        //updateFees();
+        studentFees();
         break;
     case 4:
         submenu();
+        break;
+    default:
+        cout<<"\n\t\t\t\t Invalid Choice..! Please Try Again..!";
+        cout<<"\n\n # Press Enter key for Try Agin...!";
         break;
     }
     getch();
@@ -629,9 +634,9 @@ void student :: displayFees()
 y1:
     system("cls");
     fstream file;
-    int n = 0, total=0 , class_ = 0;
+    int n = 0, total=0, class_ = 0;
     cout<<"\n-----------------------------------------------------------------------"<<endl;
-    cout<<"\n------------------ Class Waise Student Fees Details --------------------"<<endl;
+    cout<<"\n------------------ Class Wise Student Fees Details --------------------"<<endl;
     cout<<"\n\t\t\t Enter Class(1-10): ";
     cin>>n;
     cout<<endl;
@@ -742,10 +747,76 @@ z:
             cout<<"\n\t\t# No Data is Present..!";
             cout<<"\n\n # Press Enter Key for Main menu...!";
         }
+        else if(choice2 == 3 ) updateFees();
 
         else  cout<<"\n\n # Press Enter Key for Main menu...!";
     }
 }
+
+void student :: updateFees()
+{
+    char s5;
+    int r2, n2, d2, fee2,due2, due4 ;
+    if(total!=0)
+    {
+        cout<<"\n\t\t\t Are you Sure...[y,n] ";
+        cin>>s5;
+        if(s5=='y'||s5=='Y')
+        {
+            ofstream temf;
+            temf.open("temp.txt");
+            fstream file;
+            file.open("fees.txt", ios::in);
+            file>>roll>>class_>>demand>>fee>>due;
+
+            while(!file.eof())
+            {
+                if(r == roll && n == class_)
+                {
+                    r2 = roll;
+                    n2 = class_;
+                    d2 = demand ;
+                    due2 = due;
+                }
+                else if(r != roll && n == class_)
+                {
+                    temf<<" "<<roll<<" "<<class_<<" "<<demand<<" "<<fee<<" "<<due<<"\n";
+                }
+
+                else if(r == roll && n != class_)
+                {
+                    temf<<" "<<roll<<" "<<class_<<" "<<demand<<" "<<fee<<" "<<due<<"\n";
+                }
+
+                else if(r!=roll && n != class_)
+                {
+                    temf<<" "<<roll<<" "<<class_<<" "<<demand<<" "<<fee<<" "<<due<<"\n";
+                }
+
+                file>>roll>>class_>>demand>>fee>>due;
+            }
+            cout << "\n\n\t\t\t Enter Payment Amount: ";
+            cin >> fee2;
+            due4 = due2 - fee2 ;
+            temf<<" "<<r2<<" "<<n2<<" "<<d2<<" "<<fee2<<" "<<due4<<"\n";
+
+            file.close();
+            temf.close();
+            remove("fees.txt");
+            rename("temp.txt","fees.txt");
+
+            cout<<"\n\t\t\t Record Updated..!";
+            cout<<"\n\n\n # Press Enter Key for Fees menu...!";
+        }
+        else
+        {
+            cout<<"\n\t\t\t Record not Updated..!";
+
+            cout<<"\n\n\n # Press Enter Key for Fees menu...!";
+        }
+    }
+}
+
 
 int main()
 {
