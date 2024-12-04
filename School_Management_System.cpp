@@ -21,13 +21,14 @@ public:
     void submenu();
     void insert();
     void display();
-    void search();
+    int search();
     void delet();
     void feesMenu();
     void newFeesAdd();
     void displayFees();
     void studentFees();
     void updateFees();
+    void studentLimits();
 };
 
 enum IN
@@ -220,8 +221,9 @@ menustart:
     cout<<"\t\t\t\t 3. Search student Record"<<endl;
     cout<<"\t\t\t\t 4. Delete student Record"<<endl;
     cout<<"\t\t\t\t 5. Fees Details"<<endl;
-    cout<<"\t\t\t\t 6. Change PIN"<<endl;
-    cout<<"\t\t\t\t 7. LogOut"<<endl<<endl;
+    cout<<"\t\t\t\t 6. Set Student Limit per Class"<<endl;
+    cout<<"\t\t\t\t 7. Change PIN"<<endl;
+    cout<<"\t\t\t\t 8. LogOut"<<endl<<endl;
 
     cout<<"\t\t\t\t------------------------------"<<endl;
     cout<<"\t\t\t\t Choose Option : [1/2/3/4/5/6/7]"<<endl;
@@ -244,9 +246,11 @@ menustart:
     case 2:
         display();
         break;
+
     case 3:
         search();
         break;
+
     case 4:
         delet();
         break;
@@ -254,11 +258,16 @@ menustart:
     case 5:
         feesMenu();
         break;
+
     case 6:
-        PasswordCng();
+        studentLimits();
         break;
 
     case 7:
+        PasswordCng();
+        break;
+
+    case 8:
         cout<<"\n\n\t\t\t\t   LOGOUT!\n\n\t\t\t  Thanks for using our software."<<endl<<"\n\t\t\tAll rights reserved, (c) 2024 Akatsuki."<<endl<<endl<<endl;
         usleep(5000000);
         menu();
@@ -283,9 +292,21 @@ x:
     getline(cin, name);
     cout << "\t\t\t Enter Roll: ";
     cin >> roll;
+    fstream file0;
+    int limits;
+    file0.open("limit.txt", ios::in);
+    file0>>limits;
+    if(roll > limits || roll<1)
+    {
+        file0.close();
+        cout<<"\n\n\t\t\tRoll Invalid!";
+        cout<<"\n\n\n # Press Enter key for try Again...!";
+        getch();
+        goto x;
+    }
     cout << "\t\t\t Enter Class: ";
     cin >> class_;
-    if(class_<0 || class_>10)
+    if(class_<1 || class_>10)
     {
         cout<<"\n\n\t\t\tClass Invalid!";
         cout<<"\n\n\n # Press Enter key for try Again...!";
@@ -397,7 +418,7 @@ y:
 
 }
 
-void student::search()
+int student::search()
 {
 z:
     fstream file;
@@ -414,12 +435,40 @@ z:
     {
         cout<<"\n\n\t\t\tClass Invalid!";
         cout<<"\n\n # Press Enter key for try Again...!";
-        getch();
-        goto z;
-
+        if(choice==4)
+        {
+            getch();
+            return 2;
+        }
+        else
+        {
+            getch();
+            goto z;
+        }
     }
     cout<<"\t\t\t Enter Roll: ";
     cin>>r;
+    fstream file0;
+    int limits;
+    file0.open("limit.txt", ios::in);
+    file0>>limits;
+    if(r > limits || r<1)
+    {
+        file0.close();
+        cout<<"\n\n\t\t\tRoll Invalid!";
+        cout<<"\n\n\n # Press Enter key for try Again...!";
+        if(choice==4)
+        {
+            getch();
+            return 2;
+        }
+        else
+        {
+            getch();
+            goto z;
+        }
+    }
+
 
     file.open("studentRecord.txt", ios::in);
     if(!file)
@@ -481,46 +530,25 @@ z:
 
 void student :: delet()
 {
+v:
     system("cls");
     cout<<"\n-----------------------------------------------------------------------"<<endl;
     cout<<"\n---------------------- Delete Student Details -------------------------"<<endl;
-    search();
-    char s;
-    if(total!=0)
+    if(search()==2)
+        goto v;
+    else
     {
-        cout<<"\n\t\t\t Are you Sure...[y,n] ";
-        cin>>s;
-        if(s=='y'||s=='Y')
+        char s;
+        if(total!=0)
         {
-            ofstream temf;
-            temf.open("temp.txt");
-            fstream file;
-            file.open("studentRecord.txt", ios::in);
-            file.ignore();
-            getline(file,name);
-            file>>roll>>class_;
-            file.ignore();
-            getline(file,address);
-            file>>phn_no;
-            file.ignore();
-
-            while(!file.eof())
+            cout<<"\n\t\t\t Are you Sure...[y,n] ";
+            cin>>s;
+            if(s=='y'||s=='Y')
             {
-                if(r != roll && n == class_)
-                {
-                    temf<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
-                }
-
-                else if(r == roll && n != class_)
-                {
-                    temf<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
-                }
-
-                else if(r!=roll && n != class_)
-                {
-                    temf<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
-                }
-
+                ofstream temf;
+                temf.open("temp.txt");
+                fstream file;
+                file.open("studentRecord.txt", ios::in);
                 file.ignore();
                 getline(file,name);
                 file>>roll>>class_;
@@ -528,24 +556,50 @@ void student :: delet()
                 getline(file,address);
                 file>>phn_no;
                 file.ignore();
+
+                while(!file.eof())
+                {
+                    if(r != roll && n == class_)
+                    {
+                        temf<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
+                    }
+
+                    else if(r == roll && n != class_)
+                    {
+                        temf<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
+                    }
+
+                    else if(r!=roll && n != class_)
+                    {
+                        temf<<" "<<name<<"\n"<<roll<<" "<<class_<<"\n"<<address<<"\n"<<phn_no<<"\n";
+                    }
+
+                    file.ignore();
+                    getline(file,name);
+                    file>>roll>>class_;
+                    file.ignore();
+                    getline(file,address);
+                    file>>phn_no;
+                    file.ignore();
+                }
+                file.close();
+                temf.close();
+                remove("studentRecord.txt");
+                rename("temp.txt","studentRecord.txt");
+
+                cout<<"\n\t\t\t Record Deleted..!";
+                cout<<"\n\n\n # Press Enter Key for Main menu...!";
+
             }
-            file.close();
-            temf.close();
-            remove("studentRecord.txt");
-            rename("temp.txt","studentRecord.txt");
 
-            cout<<"\n\t\t\t Record Deleted..!";
-            cout<<"\n\n\n # Press Enter Key for Main menu...!";
+            else
+            {
+                cout<<"\n\t\t\t Record not Deleted..!";
+
+                cout<<"\n\n\n # Press Enter Key for Main menu...!";
+            }
 
         }
-
-        else
-        {
-            cout<<"\n\t\t\t Record not Deleted..!";
-
-            cout<<"\n\n\n # Press Enter Key for Main menu...!";
-        }
-
     }
 }
 
@@ -607,7 +661,7 @@ x1:
 
     cout << "\n\n\t\t\t Enter Class: ";
     cin >> class_;
-    if(class_<0 || class_>10)
+    if(class_<1 || class_>10)
     {
         cout<<"\n\n\t\t\tClass Invalid!";
         cout<<"\n\n\n # Press Enter key for try Again...!";
@@ -616,6 +670,19 @@ x1:
     }
     cout << "\t\t\t Enter Roll: ";
     cin >> roll;
+    fstream file0;
+    int limits;
+    file0.open("limit.txt", ios::in);
+    file0>>limits;
+    if(roll > limits || roll<1)
+    {
+        file0.close();
+        cout<<"\n\n\t\t\tRoll Invalid!";
+        cout<<"\n\n\n # Press Enter key for try Again...!";
+        getch();
+        goto x1;
+    }
+
     cout << "\t\t\t Demand for this year: ";
     cin>>demand;
     cout << "\t\t\t Enter Payment Amount: ";
@@ -711,6 +778,18 @@ z:
         }
         cout<<"\t\t\t Enter Roll: ";
         cin>>r;
+        fstream file0;
+        int limits;
+        file0.open("limit.txt", ios::in);
+        file0>>limits;
+        if(r > limits || r<1)
+        {
+            file0.close();
+            cout<<"\n\n\t\t\tRoll Invalid!";
+            cout<<"\n\n\n # Press Enter key for try Again...!";
+            getch();
+            goto z;
+        }
     }
     file.open("fees.txt", ios::in);
     if(!file)
@@ -817,6 +896,20 @@ void student :: updateFees()
     }
 }
 
+void student :: studentLimits()
+{
+    system("cls");
+    cout<<"\n\n\t\t\t **Before Set Student limit Delete Previous Data** \n\n";
+    fstream file;
+    cout<<"\n\n\t\t\t\t Enter Student limit per Class: ";
+    int limit;
+    cin>>limit;
+    file.open("limit.txt", ios::out);
+    file<<limit;
+    file.close();
+    cout<<"\n\t\t\t\t Limit Set Successfully..!";
+    cout<<"\n\n\n # Press Enter Key for Main menu...!";
+}
 
 int main()
 {
