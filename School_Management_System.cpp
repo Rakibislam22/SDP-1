@@ -16,7 +16,7 @@ private:
     int class_,roll,fee,demand,due;
 public:
     string usn,t;
-    int s,choice,choice2,n,r,pass,total=0,un = 0 ;
+    int s,choice,choice2,n,r,pass,total=0,un = 0,um = 0;
     void menu();
     void PasswordCng();
     void submenu();
@@ -32,6 +32,7 @@ public:
     void updateFees();
     void studentLimits();
     int check(int c);
+    void upDemand(int cc,int D);
 };
 
 enum IN
@@ -215,9 +216,9 @@ void student::submenu()
 menustart:
     char x;
     system("cls");
-    cout<<"\t\t\t\t-----------------------------"<<endl;
-    cout<<"\t\t\t\t| SCHOOL MANAGEMENT SYSTEM  |"<<endl;
-    cout<<"\t\t\t\t-----------------------------"<<endl;
+    cout<<"\t\t\t\t--------------------------------"<<endl;
+    cout<<"\t\t\t\t|   SCHOOL MANAGEMENT SYSTEM   |"<<endl;
+    cout<<"\t\t\t\t--------------------------------"<<endl;
     cout<<"\t\t\t\t Profile: "<<usn<<endl;
     cout<<"\n\t\t\t\t 1. Enter New student Record"<<endl;
     cout<<"\t\t\t\t 2. Display student Record"<<endl;
@@ -228,9 +229,9 @@ menustart:
     cout<<"\t\t\t\t 7. Change PIN"<<endl;
     cout<<"\t\t\t\t 8. LogOut"<<endl<<endl;
 
-    cout<<"\t\t\t\t------------------------------"<<endl;
-    cout<<"\t\t\t\t Choose Option : [1/2/3/4/5/6/7/8]"<<endl;
-    cout<<"\t\t\t\t------------------------------"<<endl;
+    cout<<"\t\t\t\t---------------------------------"<<endl;
+    cout<<"\t\t\t\tChoose Option : [1/2/3/4/5/6/7/8]"<<endl;
+    cout<<"\t\t\t\t---------------------------------"<<endl;
     cout<<"Enter Your Choose: ";
     cin>>choice;
 
@@ -240,7 +241,7 @@ menustart:
         do
         {
             if(insert()== -1) break;
-            cout<<"\n\t\t Add Another Student Record [Y,N]: ";
+            cout<<"\n\t\t Add Another Student Record [y,n]: ";
             cin>>x;
         }
         while(x=='Y' || x=='y');
@@ -329,7 +330,7 @@ x:
     }
     if(roll > limits || roll<1)
     {
-        cout<<"\n\n\t\t\tRoll Invalid!";
+        cout<<"\n\n\t\t\tRoll Invalid! Enter Roll Under Limit.";
         cout<<"\n\n\n # Press Enter key for try Again...!";
         getch();
         goto x;
@@ -495,7 +496,7 @@ z:
         un = 0;
         if(r > limits || r<1)
         {
-            cout<<"\n\n\t\t\tRoll Invalid!";
+            cout<<"\n\n\t\t\tRoll Invalid! Enter Roll Under Limit.";
             cout<<"\n\n\n # Press Enter key for try Again...!";
             if(choice==4)
             {
@@ -524,6 +525,7 @@ z:
         file.close();
         if(s != 2 )
             cout<<"\n\n # Press Enter Key for Main menu...!";
+        return -1;
     }
     if(!file && choice == 1)
     {
@@ -743,7 +745,7 @@ x1:
         }
         fileD2.close();
     }
-    if(10-coun != 0 && coun != 0)
+    if(11-coun != 0 && coun != 0)
         cout << "\n\n\t\t\t"<<11-coun<<" Classes Demand Not set yet!";
     else if(10-coun != 0 && coun == 0)
         cout << "\n\n\t\t\t"<<10-coun<<" Classes Demand Not set yet!";
@@ -763,7 +765,7 @@ x1:
     un = 0;
     if(r > limits || r<1)
     {
-        cout<<"\n\n\t\t\tRoll Invalid!";
+        cout<<"\n\n\t\t\tRoll Invalid! Enter Roll Under Limit.";
         cout<<"\n\n\n # Press Enter key for try Again...!";
         getch();
         goto x1;
@@ -944,9 +946,15 @@ z:
         cin>>r;
         int limits = check(n);
         un = 0;
-        if(r > limits || r<1)
+        if(limits == -1 )
         {
-            cout<<"\n\n\t\t\tRoll Invalid!";
+            cout<<"\n\n\t\t\tNo Data is Present...!";
+            cout<<"\n\n\n # Press Enter key for try Again...!";
+            return -1;
+        }
+        else if(r > limits || r<1)
+        {
+            cout<<"\n\n\t\t\tRoll Invalid! Enter Roll Under Limit.";
             cout<<"\n\n\n # Press Enter key for try Again...!";
             getch();
             goto z;
@@ -1122,6 +1130,20 @@ x1:
         cout<<"\n\t\t\t         Set Demand          "<<endl;
         cout<<"\t\t\t-----------------------------"<<endl;
 
+        cout<<"\n\nThe Demand Set Earlier Are :";
+        for(int i=1; i<11; i++)
+        {
+            int dd = check(i);
+            if(i==3 || i==5 || i==9 || i==7 ) cout<<"\t\t\t    ";
+            if( dd > 0 )
+                cout<<"\tClass "<<i<<" = "<< dd;
+            else
+                cout<<"\tClass "<<i<<" = "<<"NULL";
+            if(i==2 || i==4 || i==6 || i==8 || i==10) cout<<"\n";
+        }
+        um++;
+
+
         int coun = 0;
         fstream fileD2;
         fileD2.open("demand.txt", ios::in);
@@ -1139,12 +1161,12 @@ x1:
             }
             fileD2.close();
         }
-        if(10-coun != 0 && coun != 0)
+        if(11-coun != 0 && coun != 0)
             cout << "\n\n\t\t\t"<<11-coun<<" Classes Demand Not set yet!";
         else if(10-coun != 0 && coun == 0)
             cout << "\n\n\t\t\t"<<10-coun<<" Classes Demand Not set yet!";
         else
-            cout << "\n\n\t\t"<<"All Classes Demand set![ For this Input Demand has Update ]";
+            cout << "\n\n\t\t"<<"All Classes Demand set![ For this Input Demand has Updated ]";
 
         cout << "\n\n\t\t\t Enter Class: ";
         cin >> class_;
@@ -1155,14 +1177,22 @@ x1:
             getch();
             goto x1;
         }
+        int dom = check(class_);
+        um = 0;
 
-        cout << "\t\t\t Demand for this year: ";
-        cin>>demand;
-        fstream file;
-        file.open("demand.txt", ios::app | ios::out);
-        file<<" "<<class_<<" "<<demand<<"\n";
-        file.close();
-        cout<<"\n\t\t Demand Set Successfully..!";
+        if(dom == 2 || dom == -1)
+        {
+            cout << "\t\t\t Demand for this year: ";
+            cin>>demand;
+            fstream file;
+            file.open("demand.txt", ios::app | ios::out);
+            file<<" "<<class_<<" "<<demand<<"\n";
+            file.close();
+            if(dom == 2) upDemand(class_, demand );
+            cout<<"\n\t\t Demand Set Successfully..!";
+        }
+        else if(dom == -2) cout<<"\n\t\t Demand Not Update..!";
+
         cout<<"\n\n\n\t\t Set Another Class Demand [Y,N]: ";
         cin>>x2;
     }
@@ -1207,7 +1237,7 @@ void student :: studentLimits()
         cout<<"\n\n\t\t\t\t Limit Set Successfully..!";
 
     }
-    else if(don==2)
+    else if(don == -2)
     {
         cout<<"\n\n\t\t\t\t Limit not Update..!";
     }
@@ -1223,7 +1253,60 @@ void student :: studentLimits()
 
 int student :: check(int c)
 {
-    if(choice == 1 || choice == 6)
+    if(choice2 == 1)
+    {
+        int ck1 = 0;
+        fstream demands;
+        demands.open("demand.txt", ios::in);
+        if(!demands) return -1;
+        else
+        {
+            int rr, dema;
+            while(demands>>rr>>dema)
+            {
+                if(rr == c)
+                {
+                    ck1 = 1;
+                    demands.close();
+                    if(um == 0)
+                        return dema;
+                }
+            }
+            if(ck1 == 1 && um != 0 )
+            {
+                char com;
+                int rr2, demma;
+                cout<<"\n\n\t\t\t\tClass "<<c<<" Demand Already Set...!";
+                cout<<"\n\n\t\t\t\tDo You want to Update [y/n]: ";
+                cin>>com;
+                cout<<endl;
+                if(com == 'y' || com == 'Y')
+                {
+                    ofstream temp5;
+                    temp5.open("temp5.txt");
+                    fstream file;
+                    file.open("demand.txt", ios::in);
+                    while(file>>rr2>>demma)
+                    {
+                        if(c != rr2)
+                        {
+                            temp5<<rr2<<" "<<demma<<"\n";
+                        }
+                    }
+                    file.close();
+                    temp5.close();
+                    remove("demand.txt");
+                    rename("temp5.txt","demand.txt");
+                    return 2;
+                }
+                return -2;
+            }
+
+            return -1;
+        }
+    }
+
+    else
     {
         int ck = 0 ;
         fstream file;
@@ -1246,9 +1329,10 @@ int student :: check(int c)
             {
                 char con;
                 int c3, lim;
-                cout<<"\n\n\t\t\t\tClass "<<c<<" Limit Already Set...!";
-                cout<<"\n\n\t\t\t\tDo You want to Update [y/n]: ";
+                cout<<"\n\n\n\t\t\t\tClass "<<c<<" Limit Already Set...!";
+                cout<<"\n\n\n\t\t\t\tDo You want to Update [y/n]: ";
                 cin>>con;
+                cout<<endl;
                 if(con == 'y' || con == 'Y')
                 {
                     ofstream temp1;
@@ -1274,6 +1358,40 @@ int student :: check(int c)
             file.close();
             return -1;
         }
+    }
+
+}
+
+void student :: upDemand(int cc,int D)
+{
+    ofstream temp10;
+    temp10.open("temp10.txt");
+    fstream upD;
+    upD.open("fees.txt", ios::in );
+    if(!upD) return;
+    else
+    {
+        int rb, coo, dema, lp, rd;
+        string daa;
+        while(upD>>rb>>coo>>dema>>lp>>rd)
+        {
+            upD.ignore();
+            getline(upD,daa);
+
+            if( cc == coo)
+            {
+                int doc = dema - rd ;
+                dema = D;
+                rd = D - doc;
+            }
+
+            temp10<<" "<<rb<<" "<<coo<<" "<<dema<<" "<<lp<<" "<<rd<<"\n"<<daa<<"\n";
+
+        }
+        upD.close();
+        temp10.close();
+        remove("fees.txt");
+        rename("temp10.txt","fees.txt");
     }
 }
 
